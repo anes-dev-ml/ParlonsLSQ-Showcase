@@ -1,0 +1,54 @@
+{
+  "showcase_release": "v1.0.0-showcase",
+  "status": "validation_pending",
+  "project": "Parlons LSQ",
+  "runtime": "v1.5",
+  "frontend": {
+    "repository": "private ParlonsLSQ-Frontend",
+    "revision": "09d60a139ed81b84c6ca59ea1d70d6f1796816d7"
+  },
+  "backend_reference": {
+    "repository": "private ParlonsLSQ-Backend",
+    "revision": "71c6d7dae280f6f207ccdf67048ecaf7e2af2571"
+  },
+  "recognition": {
+    "engine": "prototype-lsq-29-v1",
+    "task": "isolated-sign classification",
+    "classes": 29,
+    "input_shape": [64, 228],
+    "feature_schema": "legacy-mediapipe-228-v1",
+    "reference_h5_sha256": "98590d3b47e299db7966bdc1d51946de3049d51934280e320e6dfbb18fda8110",
+    "scores_are_calibrated_confidence": false,
+    "unknown_detector": false
+  },
+  "platforms": ["android", "web", "windows"],
+  "recognition_transport": "local/offline",
+  "controlled_evaluation": {
+    "classes": 29,
+    "attempts_per_class": 5,
+    "planned_trials": 145,
+    "status": "pending_final_validation"
+  },
+  "expected_screenshots": [
+    "screenshots/01-home-desktop.png",
+    "screenshots/02-home-compact.png",
+    "screenshots/03-recognition-ready-android.png",
+    "screenshots/04-recognition-result-android.png",
+    "screenshots/05-recognition-uncertain.png",
+    "screenshots/06-sign-library.png",
+    "screenshots/07-sign-detail.png",
+    "screenshots/08-practice.png",
+    "screenshots/09-privacy.png",
+    "screenshots/10-settings-arabic-rtl.png",
+    "screenshots/11-android-launcher.png"
+  ],
+  "source_access": "private; case-by-case read-only review may be granted",
+  "claim_boundary": {
+    "continuous_translation": false,
+    "fingerspelling": false,
+    "open_set_recognition": false,
+    "population_generalization": false,
+    "clinical_validation": false,
+    "large_sign_language_model": false
+  }
+}
