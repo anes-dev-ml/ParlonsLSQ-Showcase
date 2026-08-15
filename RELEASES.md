@@ -14,6 +14,22 @@ A showcase release binds together:
 
 The canonical source revisions are recorded in [BUILD_MANIFEST.md](BUILD_MANIFEST.md) and `release/manifest.json`.
 
+## Local showcase validation
+
+Record mode validates the documentation/provenance structure while final screenshots and controlled-evaluation results are still pending:
+
+```powershell
+.\scripts\validate_showcase.ps1
+```
+
+Release mode is intentionally stricter. It requires `release/manifest.json` to be marked ready, the controlled evaluation to be complete, and every expected screenshot to exist:
+
+```powershell
+.\scripts\validate_showcase.ps1 -Release
+```
+
+The validator uses only the Python standard library and checks required documents, private-source revision provenance, the frozen model contract, the 145-trial plan, the local/offline recognition boundary, expected release evidence, and obvious sensitive-file/secret mistakes.
+
 ## Runtime v1.5 release sequence
 
 1. Freeze implementation.
@@ -22,10 +38,11 @@ The canonical source revisions are recorded in [BUILD_MANIFEST.md](BUILD_MANIFES
 4. Update represented private-source SHAs if a fix changed either repository.
 5. Capture clean visual evidence from the final validated revisions.
 6. Insert measured controlled-evaluation results without expanding the claim boundary.
-7. Run showcase validation in release mode.
-8. Merge the reviewed showcase branch to `main`.
-9. Tag the immutable public evidence record as `v1.0.0-showcase`.
-10. Make the repository public only after the reviewed release record is ready.
+7. Set the machine-readable manifest to `status: ready` and the evaluation status to `complete`.
+8. Run showcase validation in release mode.
+9. Merge the reviewed showcase branch to `main`.
+10. Tag the immutable public evidence record as `v1.0.0-showcase`.
+11. Make the repository public only after the reviewed release record is ready.
 
 ## Correction policy
 
