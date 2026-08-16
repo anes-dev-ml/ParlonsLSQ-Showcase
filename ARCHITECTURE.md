@@ -1,12 +1,12 @@
 # Architecture
 
-Parlons LSQ Runtime v1.5 is a **local-first, multi-platform compatibility runtime** around a frozen historical 29-class isolated-sign classifier.
+Parlons LSQ Runtime v1.5 is a **local-first multi-platform runtime** built around a frozen historical 29-class isolated-sign classifier.
 
-The architecture intentionally separates three concerns:
+The architecture separates three things deliberately:
 
-1. the **product experience** — learning, recognition, settings, history, localization;
-2. the **frozen compatibility runtime** — reproduce the historical model correctly on Android, Web, and Windows;
-3. the **future research program** — new datasets, representations, and larger models that must not silently change Runtime v1.5 claims.
+1. **Research/model contract** — the frozen model, temporal input and compatibility feature schema.
+2. **Product experience** — camera lifecycle, recognition states, learning content, history, localization and accessibility.
+3. **Future research generation** — new data, representations and larger models that should not silently rewrite the v1.5 baseline.
 
 ## System context
 
@@ -24,24 +24,36 @@ flowchart LR
     Flutter --> Store
 ```
 
-The application has no normal recognition HTTP endpoint. Learning content and recognition are deliberately separate surfaces.
+Normal recognition does not depend on an HTTP inference endpoint in Runtime v1.5.
 
-## Shared product flow
+## Frozen recognition contract
 
-```text
-Home
-├── Recognize
-├── Signs
-│   ├── search / categories / saved
-│   ├── sign detail
-│   └── practice
-└── You
-    ├── settings
-    ├── optional local recognition history
-    └── privacy and data
+| Property | Runtime v1.5 |
+|---|---|
+| Engine | `prototype-lsq-29-v1` |
+| Task | Isolated-sign classification |
+| Classes | 29 |
+| Input | `64 × 228` |
+| Feature schema | `legacy-mediapipe-228-v1` |
+| Reference model | Frozen historical H5 |
+| Product derivative | Fixed-batch TFLite/LiteRT where required |
+| Output semantics | Raw classifier scores |
+| Trained unknown detector | None |
+
+Shared conceptual pipeline:
+
+```mermaid
+flowchart LR
+    C[Camera] --> P[Perception]
+    P --> F[228-D compatibility observations]
+    F --> T[Temporal normalization to 64 steps]
+    T --> M[Frozen 29-class classifier]
+    M --> R[Typed recognition result]
 ```
 
-Recognition is state-driven rather than treated as a single camera button:
+## Recognition state model
+
+Recognition is treated as a lifecycle rather than a single camera button:
 
 ```text
 permission required
@@ -53,40 +65,15 @@ permission required
 → recognized / uncertain / unknown / insufficient input
 ```
 
-Lifecycle interruption and hardware/runtime failures are explicit recoverable states.
+Lifecycle interruption and runtime/hardware failures remain explicit recoverable states.
 
-## Frozen recognition contract
+## Android
 
-| Property | Runtime v1.5 |
-|---|---|
-| Engine | `prototype-lsq-29-v1` |
-| Task | isolated-sign classification |
-| Classes | 29 |
-| Input | `64 × 228` |
-| Feature schema | `legacy-mediapipe-228-v1` |
-| Model source | frozen historical H5 |
-| Product derivative | fixed-batch TFLite/LiteRT where required |
-| Output semantics | raw classifier scores |
-| Unknown detector | none |
-
-The shared pipeline is:
-
-```mermaid
-flowchart LR
-    C[Camera] --> P[Perception]
-    P --> F[228-D compatibility features]
-    F --> T[Temporal normalization to 64 steps]
-    T --> M[Frozen 29-class classifier]
-    M --> R[Typed recognition result]
-```
-
-## Android runtime
-
-Android uses the camera stream directly and keeps inference local.
+Android keeps the complete inference path on device:
 
 ```text
 CameraImage
-→ native MediaPipe Tasks in image mode
+→ native MediaPipe Tasks in IMAGE mode
 → timestamped 228-D observations
 → fixed recognition window
 → temporal resampling to 64 × 228
@@ -94,11 +81,11 @@ CameraImage
 → shared product result
 ```
 
-The app prefers the front camera for the frozen validation target. Back-camera handedness semantics are intentionally not promoted into a release claim without cross-platform parity evidence.
+The app starts from its preferred camera and exposes **camera switching when multiple cameras are available**. Switching is allowed only from the safe ready state, not in the middle of capture or processing.
 
-## Web runtime
+## Web
 
-The Web target uses a short local browser clip because browser camera/perception constraints differ from native Android.
+The Web target uses a short local browser clip:
 
 ```text
 browser camera
@@ -111,11 +98,11 @@ browser camera
 → shared product result
 ```
 
-Recognition stays in the browser. No TFJS recognition bridge and no recognition backend are required for the retained Runtime v1.5 path.
+Recognition stays in the browser. Runtime v1.5 does not require a TFJS recognition bridge or remote recognition server.
 
-## Windows development runtime
+## Windows
 
-The Windows product target uses a local worker adapter during Runtime v1.5 development:
+The Windows target uses a local persistent worker adapter:
 
 ```text
 Flutter camera clip
@@ -127,11 +114,11 @@ Flutter camera clip
 → shared product result
 ```
 
-The worker does not expose an HTTP recognition service. It exists to preserve a reproducible local reference path while the Windows-native ML packaging strategy remains outside the frozen product claim.
+The worker remains local and does not open an HTTP recognition port.
 
 ## Backend boundary
 
-The retained FastAPI HTTP surface is intentionally small:
+The active FastAPI surface is intentionally small:
 
 ```text
 GET /api/v1/health
@@ -140,15 +127,20 @@ GET /api/v1/signs
 GET /api/v1/signs/{sign_id}
 ```
 
-TensorFlow and MediaPipe are not part of normal FastAPI startup. The Backend repository also owns reference/evaluation tooling and the Windows local worker, but it is **not** the product recognition server.
+The Backend also retains model/reference utilities, parity/evaluation tooling and the Windows worker. In addition, it now preserves a **transport-neutral remote-recognition contract** for a future large or sensitive model. That seam is dormant in Runtime v1.5: it is not mounted as an HTTP recognition route and does not change the current local product behavior.
 
-## Learning resilience
+This gives the project a clean future path:
 
-Learning content is independent from model support.
+```text
+current compact model → local inference
+future larger model   → local / secure hosted / hybrid, chosen from actual constraints
+```
 
-The product can display the learning catalogue through its canonical content source and retain a bundled read-only fallback so a missing content service does not make the learning UI unusable.
+## Learning and recognition are separate
 
-This matters because the 29 recognition classes and the learning product should not be mistaken for the same boundary.
+Learning content is not forced to match the 29 recognition classes. A sign can be useful educational content even when the frozen classifier does not support it.
+
+The app can use versioned learning content and a bundled read-only fallback, so a missing content service does not make the learning surface unusable.
 
 ## Local state and privacy
 
@@ -158,57 +150,22 @@ The application may keep:
 - saved signs;
 - optional recognition-result history.
 
-The ordinary history contract excludes:
-
-- camera frames;
-- video clips;
-- MediaPipe landmarks;
-- 228-D feature tensors.
-
-Recognition media/features are temporary runtime inputs, not normal product-history records.
+Ordinary local history excludes camera frames, video clips, MediaPipe landmarks and 228-D feature tensors. Recognition media/features are temporary runtime inputs.
 
 ## Localization and accessibility
 
-The product supports:
+The product supports French, English and Arabic, including RTL presentation for Arabic, plus responsive layout behavior, stronger contrast preferences and reduced-motion preferences.
 
-- French;
-- English;
-- Arabic;
-- RTL presentation for Arabic;
-- larger text/responsive layout behavior;
-- increased contrast preference;
-- reduced-motion preference.
+## Architectural principles
 
-These concerns are part of the product architecture rather than post-release decoration because sign-language interaction often already places significant visual demand on the user.
-
-## Important architectural decisions
-
-### 1. Freeze the historical prototype before expanding research
-
-The recovered model, exact feature schema, and platform derivatives are kept identifiable and testable. New research does not silently replace the baseline.
-
-### 2. Keep recognition local
-
-Local recognition improves the privacy boundary and avoids coupling a camera interaction to network availability or a recognition API.
-
-### 3. Use one product result contract across platform-specific runtimes
-
-Android, Web, and Windows differ internally, but presentation code should not need to understand MediaPipe, TensorFlow, or LiteRT details.
-
-### 4. Separate learning content from recognition support
-
-A sign can be useful educational content even when the frozen classifier cannot recognize it.
-
-### 5. Treat uncertainty as a product state
-
-The app does not reduce the entire recognition experience to a confident-looking label. Uncertain, unknown, insufficient-input, interrupted, and unavailable states remain visible.
-
-### 6. Do not turn compatibility code into future research architecture
-
-The `legacy-mediapipe-228-v1` representation exists to reproduce the historical classifier. Future LSQ work can replace it without rewriting what Runtime v1.5 was.
+- **Freeze before scaling.** The historical model and feature contract remain identifiable and reproducible.
+- **One result contract, different platform runtimes.** Presentation code does not need to understand MediaPipe/TensorFlow/LiteRT details.
+- **Local by default for v1.5.** Privacy and latency stay simple while the model is compact enough to ship.
+- **Do not confuse compatibility code with future research architecture.** `legacy-mediapipe-228-v1` exists to reproduce the first model, not to dictate the next one.
+- **Preserve an upgrade seam.** A future model can move server-side or hybrid without resurrecting an old development endpoint as production architecture.
 
 ## Source boundary
 
-The detailed implementation lives in private repositories. This public architecture document describes reviewed behavior and boundaries without distributing private source, model binaries, credentials, or research datasets.
+Detailed implementation lives in private repositories. This document describes reviewed architecture without distributing private source, model binaries, credentials or research datasets.
 
 Exact represented revisions are recorded in [BUILD_MANIFEST.md](BUILD_MANIFEST.md).

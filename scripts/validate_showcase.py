@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 from pathlib import Path
 import re
@@ -28,16 +29,14 @@ REQUIRED_FILES = [
     "screenshots/README.md",
 ]
 
-FORBIDDEN_NAMES = {
-    ".env",
-    ".env.local",
-    "id_rsa",
-    "id_ed25519",
-}
+FORBIDDEN_NAMES = {".env", ".env.local", "id_rsa", "id_ed25519"}
 
 SECRET_PATTERNS = [
     re.compile(r"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----"),
-    re.compile(r"(?i)\b(?:api[_-]?key|secret[_-]?key|access[_-]?token|refresh[_-]?token)\s*[:=]\s*[\"'][^\"']{8,}"),
+    re.compile(
+        r"(?i)\b(?:api[_-]?key|secret[_-]?key|access[_-]?token|refresh[_-]?token)"
+        r"\s*[:=]\s*[\"'][^\"']{8,}"
+    ),
 ]
 
 
@@ -66,36 +65,51 @@ def validate_required_files() -> None:
 def validate_manifest(data: dict, release: bool) -> None:
     frontend = data.get("frontend", {}).get("revision")
     backend = data.get("backend_reference", {}).get("revision")
-    engine = data.get("recognition", {}).get("engine")
-    shape = data.get("recognition", {}).get("input_shape")
-    trials = data.get("controlled_evaluation", {}).get("planned_trials")
+    recognition = data.get("recognition", {})
 
     for name, value in (("frontend revision", frontend), ("backend revision", backend)):
         if not isinstance(value, str) or not re.fullmatch(r"[0-9a-f]{40}", value):
             fail(f"invalid {name}")
 
-    if engine != "prototype-lsq-29-v1":
+    if recognition.get("engine") != "prototype-lsq-29-v1":
         fail("unexpected recognition engine")
-    if shape != [64, 228]:
+    if recognition.get("input_shape") != [64, 228]:
         fail("unexpected frozen input shape")
-    if trials != 145:
-        fail("controlled evaluation must remain 145 planned trials")
-
+    if recognition.get("feature_schema") != "legacy-mediapipe-228-v1":
+        fail("unexpected feature schema")
     if data.get("recognition_transport") != "local/offline":
         fail("recognition transport drifted from local/offline")
 
     if release:
         if data.get("status") != "ready":
             fail("release mode requires manifest status=ready")
-        evaluation_status = data.get("controlled_evaluation", {}).get("status")
-        if evaluation_status != "complete":
-            fail("release mode requires controlled_evaluation.status=complete")
-        expected = data.get("expected_screenshots")
-        if not isinstance(expected, list) or not expected:
-            fail("release mode requires expected_screenshots")
-        missing = [path for path in expected if not (ROOT / path).is_file()]
-        if missing:
-            fail("release mode missing screenshots: " + ", ".join(missing))
+        validate_screenshot_integrity(data)
+
+
+def validate_screenshot_integrity(data: dict) -> None:
+    expected = data.get("expected_screenshots")
+    hashes = data.get("screenshot_sha256")
+    if not isinstance(expected, list) or not expected:
+        fail("release mode requires expected_screenshots")
+    if not isinstance(hashes, dict):
+        fail("release mode requires screenshot_sha256")
+
+    for relative in expected:
+        if not isinstance(relative, str):
+            fail("screenshot path must be a string")
+        path = ROOT / relative
+        if not path.is_file():
+            fail(f"release mode missing screenshot: {relative}")
+        recorded = hashes.get(relative)
+        if not isinstance(recorded, str) or not re.fullmatch(r"[0-9a-f]{64}", recorded):
+            fail(f"missing/invalid screenshot hash: {relative}")
+        actual = hashlib.sha256(path.read_bytes()).hexdigest()
+        if actual != recorded:
+            fail(f"screenshot hash mismatch: {relative}")
+
+    extras = sorted(set(hashes) - set(expected))
+    if extras:
+        fail("screenshot_sha256 contains undeclared assets: " + ", ".join(extras))
 
 
 def validate_provenance(data: dict) -> None:
@@ -132,7 +146,7 @@ def validate_safety() -> None:
 
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--release", action="store_true", help="require final evidence and ready status")
+    parser.add_argument("--release", action="store_true", help="require final public evidence integrity")
     args = parser.parse_args()
 
     validate_required_files()

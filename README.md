@@ -1,221 +1,153 @@
 # Parlons LSQ
 
-**An experimental LSQ learning and isolated-sign recognition project, built as a local-first Flutter product around a frozen 29-class research prototype.**
+**From a hand-built LSQ dataset to a reproducible local AI prototype running on Android, Web and Windows.**
 
-Parlons LSQ explores how a sign-language learning experience and an experimental recognition pipeline can live in one coherent product while keeping research claims, privacy boundaries, and future model work explicit.
+![Parlons LSQ Web home](screenshots/01-home-web.webp)
 
-> This repository is the **public showcase and technical case study** for Parlons LSQ. The active Flutter, Python, model-runtime, and research implementation repositories remain private. This showcase contains reviewed documentation, architecture, claim boundaries, provenance, and selected evidence rather than the application source code.
+Parlons LSQ is a research-engineering project exploring computer-vision recognition for **Langue des signes québécoise (LSQ)**. The first generation started small on purpose: collect isolated-sign examples, turn motion into a reproducible numerical representation, train a classifier, then prove that the same frozen model contract can survive the full trip from experimentation to real software.
 
-## Current snapshot
+Runtime v1.5 is that first frozen checkpoint. It recognizes **29 isolated signs** through a `64 × 228` temporal input and runs locally on the three product targets developed for the project. The application is useful evidence, but the main story is the AI pipeline, what it taught us, and the larger research direction it unlocked.
 
-| Record | Value |
+## At a glance
+
+| | Runtime v1.5 |
 |---|---|
-| Product runtime | Runtime v1.5 release candidate |
-| Task | Isolated-sign LSQ recognition |
+| Research task | Experimental isolated-sign LSQ classification |
 | Frozen engine | `prototype-lsq-29-v1` |
-| Classes | 29 fixed historical classes |
-| Input | `64 × 228` |
-| Feature schema | `legacy-mediapipe-228-v1` |
-| Frontend revision | `09d60a139ed81b84c6ca59ea1d70d6f1796816d7` |
-| Backend/reference revision | `71c6d7dae280f6f207ccdf67048ecaf7e2af2571` |
-| Supported product targets | Android · Web · Windows |
-| Recognition transport | Local/offline; no recognition HTTP endpoint |
-| Validation status | Implementation frozen; final controlled validation remains |
+| Vocabulary | 29 historical classes |
+| Model input | `64 × 228` |
+| Feature contract | `legacy-mediapipe-228-v1` |
+| Product targets | Android · Web · Windows |
+| Recognition path | Local/offline |
+| Interface | French · English · Arabic/RTL |
+| Source model | Private implementation; reviewed access may be granted case-by-case |
 
-The current version is deliberately called an **experimental isolated-sign recognizer**, not a general LSQ translator. A working application is engineering evidence; it is not population-level accuracy evidence.
+## The idea
 
-## What the product does
+The original prototype did not begin with a downloaded end-to-end sign-language model. The pipeline was built manually:
 
-Parlons LSQ currently brings four user-facing areas into one interface:
+```text
+isolated LSQ clips
+        ↓
+MediaPipe landmarks
+        ↓
+228-D compatibility representation per observation
+        ↓
+temporal normalization to 64 steps
+        ↓
+29-class neural classifier
+        ↓
+frozen H5 reference
+        ↓
+platform-specific local inference
+        ↓
+Android · Web · Windows
+```
 
-- **Home** — orientation, quick access to recognition, learning suggestions, and an explicit privacy note;
-- **Recognize** — camera-based isolated-sign recognition with visible ready, capture, processing, result, uncertain, unknown, and insufficient-input states;
-- **Signs** — a searchable learning catalogue with categories, saved items, sign detail, and practice flows;
-- **You** — local preferences, optional recognition history, accessibility controls, language settings, and privacy/data information.
+That path matters. It demonstrates the ability to reason about **data collection, representation design, temporal modelling, model reproducibility, conversion/parity, platform ML integration, privacy, and product deployment** as one connected system rather than as isolated demos.
 
-The interface is available in **French, English, and Arabic**, including RTL presentation where appropriate.
+For the exact runtime split, see [ARCHITECTURE.md](ARCHITECTURE.md). For the research story and next generation, see [RESEARCH.md](RESEARCH.md).
 
-## Product preview
+## What the first baseline demonstrated
 
-Clean release-candidate screenshots are captured only from the final validation pass. The exact evidence plan lives in [EVIDENCE.md](EVIDENCE.md); debug or stale screenshots are intentionally excluded from this public case study.
+The 29-class model became strong enough in development conditions to support a real recognition workflow and to produce successful recognitions on inputs beyond the original capture set. Qualitative checks included people and reference footage the model had not been trained on.
 
-Planned public evidence covers:
+The most useful result was not a single headline percentage. It was discovering **where the first dataset stopped being enough**. Recognition was much easier to disturb when signing speed, lighting, framing, camera/body position, or capture conditions moved away from the limited variation represented in the original data.
 
-| Surface | Evidence |
+That is a valuable research result: the pipeline learned the signs, but the next leap depends on **more varied data and a stronger representation**, not squeezing another decimal point out of the same small dataset.
+
+These observations are development evidence, not a population-level accuracy claim. The project deliberately keeps that distinction clear in [EVIDENCE.md](EVIDENCE.md).
+
+## See it running
+
+### Android — local recognition on a physical phone
+
+| Capture in progress | Recognition result |
 |---|---|
-| Home | wide desktop/web, compact layout, French and English |
-| Recognition | ready/capture/result states on a physical Android device |
-| Learning | sign library, detail, saved state, practice flow |
-| Profile | privacy/data and settings |
-| Localization | Arabic RTL and large-text/accessibility pass |
-| Platform identity | Android launcher/splash, Web/PWA icon, Windows app icon |
+| <img src="screenshots/02-recognition-ready-android.webp" alt="Android recognition capture in progress" width="300"> | <img src="screenshots/03-recognition-result-android.webp" alt="Android recognized sign result" width="300"> |
 
-## Local-first recognition architecture
+The Android result is a **qualitative external-reference check**: the app was pointed at LSQ reference footage and recognized the isolated sign shown. The source footage is not redistributed in this repository and the example is not presented as an accuracy statistic.
 
-The user interaction is intentionally consistent across platforms while the platform implementation differs underneath:
+### Web — browser-local inference
 
-```mermaid
-flowchart LR
-    Camera[Camera input]
-    Perception[MediaPipe perception]
-    Legacy[Historical 228-D representation]
-    Temporal[64-step temporal sample]
-    Model[Frozen 29-class classifier]
-    Result[Shared recognition result]
+![Web recognition result](screenshots/04-recognition-result-web.webp)
 
-    Camera --> Perception
-    Perception --> Legacy
-    Legacy --> Temporal
-    Temporal --> Model
-    Model --> Result
-```
+### Windows — local reference-worker inference
 
-### Android
+![Windows recognition result](screenshots/05-recognition-result-windows.webp)
+
+For the Web and Windows captures, the camera preview was privacy-redacted after capture. The recognition result and application state were left untouched.
+
+### Arabic / RTL product surface
+
+![Arabic RTL Signs interface](screenshots/06-rtl.webp)
+
+The multilingual product layer is not a mock translation screenshot: navigation, alignment, search, categories and content presentation all move into an RTL layout for Arabic.
+
+## Cross-platform runtime
+
+The same frozen recognition contract is expressed differently on each platform:
 
 ```text
-CameraImage stream
-→ native MediaPipe Tasks
-→ sparse 228-D observations
-→ fixed temporal window
-→ resample to 64 × 228
-→ local LiteRT/TFLite
+Android
+CameraImage → native MediaPipe Tasks → 228-D observations → 64 steps → LiteRT/TFLite
+
+Web
+short local browser clip → MediaPipe Tasks WASM → 228-D observations → 64 steps → LiteRT.js WASM
+
+Windows
+short local clip → local stdio worker → OpenCV + MediaPipe Tasks → 64 steps → frozen H5
 ```
 
-### Web
+No normal recognition request is sent to FastAPI in Runtime v1.5. The Backend remains useful for learning content, reproducibility/evaluation tooling, the Windows local worker, and a dormant transport-neutral seam for a future hosted model.
 
-```text
-short local browser clip
-→ MediaPipe Tasks WASM
-→ 228-D observations
-→ resample to 64 × 228
-→ native LiteRT.js WASM
-```
+A larger future LSQ model may be **local, server-side, or hybrid** depending on model size, latency, privacy, updateability and model-protection requirements. Runtime v1.5 proves the local path without locking the research program to it forever.
 
-### Windows development runtime
+## Scope without hype
 
-```text
-short local camera clip
-→ local stdio Python worker
-→ MediaPipe Tasks
-→ resample to 64 × 228
-→ frozen H5 classifier
-```
+Runtime v1.5 is an **experimental 29-class isolated-sign recognizer**. It is not presented as continuous LSQ translation, open-vocabulary recognition, calibrated confidence, a trained unknown-sign detector, clinical validation, or a population-generalized LSQ model.
 
-Normal recognition does **not** send clips or feature tensors to a FastAPI recognition service. The backend HTTP surface is limited to health/readiness and versioned learning content.
+Those boundaries do not weaken the project; they make the engineering and research evidence easier to trust.
 
-Read [ARCHITECTURE.md](ARCHITECTURE.md) for the complete product/runtime boundary.
+## Frozen public snapshot
 
-## Why the prototype matters
+This showcase represents these private-source revisions:
 
-Parlons LSQ did not begin by downloading an end-to-end sign-language model. The historical prototype grew from a manually assembled pipeline:
+- **Frontend:** `4ffa25aab11106a226c98787f567ca4eb3524fba`
+- **Backend/reference:** `c33d480db666723bece607990a5ef1b64aac0cf3`
+- **Frozen H5 SHA-256:** `98590d3b47e299db7966bdc1d51946de3049d51934280e320e6dfbb18fda8110`
 
-```text
-record isolated sign clips
-→ extract MediaPipe landmarks
-→ convert observations to a fixed numerical representation
-→ save processed NumPy examples
-→ build 64-step temporal samples
-→ train a 29-class classifier
-→ recover and freeze the historical H5 artifact
-→ reproduce its exact feature encoder
-→ build local Android/Web/Windows compatibility runtimes
-```
+The full provenance record is in [BUILD_MANIFEST.md](BUILD_MANIFEST.md).
 
-That makes Runtime v1.5 useful for more than a demo: it is a **frozen baseline** whose behavior, representation, model identity, and limitations can be reproduced while future LSQ research evolves separately.
+## Where the project goes next
 
-Read [RESEARCH.md](RESEARCH.md) for the scientific scope and the next research direction.
+Runtime v1.5 is the first frozen checkpoint, not the destination. It proves the full path from hand-built data to a reproducible AI system.
 
-## What is intentionally *not* claimed
+The next research generation is about **scale, variation and robustness**: much broader LSQ data, more signers and sessions, stronger visual-temporal representations, and a model that can justify a much larger vocabulary under genuinely difficult conditions.
 
-Parlons LSQ currently does not claim:
+That work belongs in the private research workspace so the historical baseline stays reproducible instead of being rewritten every time the project advances. See [ROADMAP.md](ROADMAP.md).
 
-- continuous LSQ translation;
-- fingerspelling recognition;
-- open-set or unknown-sign recognition;
-- calibrated confidence;
-- population-level signer generalization;
-- clinical or production validation;
-- a large-scale LSQ language model.
+## Private source access
 
-The 228-D compatibility representation is preserved because the historical model depends on it. It is **not** presented as the final representation for future large-scale research.
+This repository is the public case study. The Flutter application, Backend/reference implementation, platform ML code, model tooling and active research repository remain private.
 
-## Privacy and trust boundary
+Serious technical reviewers, recruiters, research collaborators or potential partners may contact **[@anes-dev-ml](https://github.com/anes-dev-ml)**. Selected read-only access can be considered case-by-case. Access does not grant permission to copy, redistribute or relicense the implementation.
 
-Recognition and research participation are separate decisions.
+More detail: [ACCESS.md](ACCESS.md).
 
-- Android recognition stays on-device.
-- Web recognition stays inside the browser runtime.
-- Windows development recognition uses a temporary local clip and local stdio worker.
-- Product history stores result metadata only when enabled; it does not store camera frames, clips, landmarks, or 228-D tensors.
-- Recognition sessions are not automatically added to research datasets.
-- Future research-data contribution must be an explicit opt-in workflow.
+## Documentation
 
-Read [PRIVACY.md](PRIVACY.md).
+- [Architecture](ARCHITECTURE.md)
+- [Research scope](RESEARCH.md)
+- [Evidence record](EVIDENCE.md)
+- [Privacy boundary](PRIVACY.md)
+- [Build manifest](BUILD_MANIFEST.md)
+- [Roadmap](ROADMAP.md)
+- [Release policy](RELEASES.md)
+- [Source access](ACCESS.md)
+- [Security](SECURITY.md)
+- [License](LICENSE)
 
-## Engineering highlights
+---
 
-| Area | Current implementation |
-|---|---|
-| Product UI | Flutter across Android, Web, and Windows |
-| Localization | French, English, Arabic, RTL |
-| Recognition contract | Shared typed result and state-driven session UX |
-| Android runtime | Native MediaPipe + local LiteRT/TFLite |
-| Web runtime | MediaPipe WASM + LiteRT.js WASM |
-| Windows runtime | Local Python stdio worker + frozen H5 |
-| Learning resilience | Versioned content source with bundled read-only fallback |
-| Local state | Saved signs, preferences, optional recognition history |
-| Privacy | Recognition media/features excluded from ordinary product history |
-| Reproducibility | Frozen model identity, feature schema, parity/evaluation tooling |
-| Claim discipline | Engineering evidence separated from research/generalization claims |
-
-## Validation boundary
-
-Runtime v1.5 implementation is frozen. The remaining validation gate includes:
-
-1. repository checks and localization generation;
-2. physical-device Android product testing;
-3. Web and Windows runtime testing;
-4. H5 ↔ TFLite parity;
-5. matched cross-platform clip checks;
-6. a predeclared **29-class × 5 attempts = 145-trial** controlled evaluation;
-7. final latency/agreement and visual evidence capture.
-
-No new feature or model work is planned for Runtime v1.5 unless a validation gate fails.
-
-Read [EVIDENCE.md](EVIDENCE.md) and [BUILD_MANIFEST.md](BUILD_MANIFEST.md).
-
-## Research direction
-
-The frozen 29-class prototype is the first reproducible baseline, not the end goal.
-
-The broader project direction is to investigate more scalable LSQ representation learning and recognition using substantially larger public/partner datasets, stronger visual-temporal encoders, cross-signer evaluation, and eventually a model whose scope is meaningfully larger than isolated prototype classes.
-
-Future datasets, training experiments, model comparisons, and large-model methodology belong in the private `ParlonsLSQ-Research` workspace rather than being mixed into the frozen product runtime.
-
-## Private source and access
-
-The implementation repositories are intentionally private.
-
-This public showcase is sufficient for normal portfolio review. For a serious technical review, research collaboration, recruitment process, or partnership discussion, **read-only access to selected private implementation material may be granted case-by-case**.
-
-See [ACCESS.md](ACCESS.md) for the review boundary and contact path.
-
-## Documentation map
-
-| Document | Purpose |
-|---|---|
-| [Architecture](ARCHITECTURE.md) | Product, platform runtimes, trust boundaries, and design decisions |
-| [Research](RESEARCH.md) | Frozen prototype, scientific claim boundary, and future research direction |
-| [Evidence](EVIDENCE.md) | Validation status, evidence rules, and final capture plan |
-| [Privacy](PRIVACY.md) | Recognition, history, research participation, and data boundaries |
-| [Build manifest](BUILD_MANIFEST.md) | Exact private source revisions represented by this showcase |
-| [Roadmap](ROADMAP.md) | What follows Runtime v1.5 without rewriting its claims |
-| [Access](ACCESS.md) | Private-source review and contact policy |
-
-## Project ownership
-
-Parlons LSQ is designed and developed by **Anes** as a long-term sign-language research and engineering project spanning product development, computer vision, machine learning, reproducibility, and human-centered interaction.
-
-## License
-
-The documentation, diagrams, screenshots, branding, and approved public artifacts in this showcase are protected by the repository's [license](LICENSE). The private Frontend, Backend, and Research source repositories are not distributed or licensed through this repository.
+**A small model was enough to prove the chain. The next model is where the research gets ambitious.**

@@ -1,105 +1,79 @@
 # Roadmap
 
-Parlons LSQ uses Runtime v1.5 as a frozen baseline. The roadmap therefore separates **finishing the current evidence package** from **starting new research**.
+Parlons LSQ now has a frozen first-generation checkpoint. The roadmap moves forward from that baseline rather than extending the 29-class prototype indefinitely.
 
-## Phase 0 — Runtime v1.5 sign-off
+## Runtime v1.5 — frozen first checkpoint
 
-Status: implementation frozen; validation remains.
+**Status: complete as the public showcase baseline.**
 
-Remaining work:
+Runtime v1.5 established the full chain:
 
-- execute Frontend and Backend final validation gates;
-- complete H5 ↔ TFLite parity evidence;
-- run the 145-trial controlled evaluation;
-- record latency/agreement evidence where planned;
-- capture clean Android/Web/Windows screenshots;
-- publish the reviewed showcase evidence set.
+```text
+hand-built LSQ data
+→ reproducible feature representation
+→ temporal classifier
+→ frozen model identity
+→ local Android/Web/Windows inference
+→ multilingual product surface
+→ documented privacy and claim boundaries
+```
 
-No feature expansion belongs in this phase unless a gate exposes a release-blocking defect.
+The prototype also exposed the key limitation of its original data: robustness changes quickly with signing speed, lighting, framing, distance and position when those conditions were not represented well during data collection.
 
-## Phase 1 — Stronger research baseline
+That lesson defines the next phase.
 
-Goal: move beyond the historical 29-class compatibility pipeline without losing reproducibility.
-
-Likely work:
-
-- define a new dataset/provenance manifest;
-- establish signer-disjoint and session-disjoint splits;
-- compare stronger spatial-temporal representations;
-- benchmark pretrained video/sign-language encoders where licensing and data fit allow;
-- define robust baselines before scaling class count;
-- document uncertainty and open-set methodology rather than forcing closed-set predictions into every input.
-
-The key success criterion is **credible unseen-signer evaluation**, not simply a larger label count.
-
-## Phase 2 — Larger LSQ recognition scope
-
-Potential directions:
-
-- hundreds of signs in a focused domain;
-- broader vocabulary after data quality is proven;
-- improved motion/hand/body/face representation;
-- efficient local inference for real product constraints;
-- signer and environment robustness;
-- better handling of variants and context.
-
-Domain focus may be used when it improves data quality and real usefulness rather than presenting a tiny vocabulary as general LSQ coverage.
-
-## Phase 3 — Toward richer sign-language modelling
-
-Only after the isolated-sign methodology is strong enough:
-
-- continuous signing segmentation/recognition;
-- sequence modelling;
-- multimodal alignment with text/gloss/semantic representations where appropriate;
-- cross-lingual sign-language representation experiments;
-- larger pretrained/fine-tuned sign-language models;
-- open-vocabulary or retrieval-style systems.
-
-These directions require substantially different evidence and should not inherit Runtime v1.5 claims automatically.
-
-## Community and domain partnership
-
-As the project grows, technical scaling must be matched by stronger domain involvement.
+## Next — stronger data and model generation
 
 Priorities include:
 
-- collaboration with LSQ users and Deaf community organizations;
-- review by educators/interpreters/linguistic specialists where appropriate;
-- careful treatment of regional or signer variants;
-- consent/provenance processes for new data collection;
-- product testing with intended users rather than developer-only evaluation.
+- a substantially larger and more varied LSQ dataset;
+- stronger provenance and consent metadata;
+- more signers and independent recording sessions;
+- signer-disjoint and session-disjoint evaluation;
+- broader environmental/camera variation;
+- stronger visual-temporal representations;
+- pretrained video/sign-language encoders where appropriate;
+- better uncertainty/open-set methodology;
+- a vocabulary large enough to support a more meaningful use case.
 
-## Product evolution
+The goal is not simply “more classes.” The goal is a model whose performance survives **people and conditions it was not optimized around**.
 
-The current four-area product architecture—Home, Recognize, Signs, You—is intentionally stable.
+## Toward larger LSQ recognition
 
-Future product work should focus on depth rather than navigation sprawl:
+Once data quality and robustness justify it, the project can expand toward:
 
-- richer authentic sign-learning media;
-- meaningful practice feedback;
-- progress/review flows based on real usage;
-- clearer uncertainty/error recovery;
-- accessibility validation;
-- privacy-preserving research contribution only when a proper consent system exists.
+- hundreds of signs in a focused domain;
+- broader vocabulary;
+- richer hand/body/face/motion modelling;
+- continuous signing and sequence modelling;
+- multimodal alignment with text/gloss/semantic representations where appropriate;
+- cross-lingual sign-language representation experiments;
+- retrieval/open-vocabulary approaches.
 
-## What is not on the roadmap
+Each generation should earn its own claims rather than inheriting them from Runtime v1.5.
 
-The project does not plan to manufacture progress by:
+## Deployment evolution
 
-- adding unsupported AI labels to the UI;
-- claiming continuous translation from isolated-sign results;
-- increasing class count without signer-generalization evidence;
-- silently collecting recognition footage for research;
-- replacing reproducibility with one-off demo performance;
-- treating the historical 228-D compatibility representation as the permanent scientific architecture.
+Runtime v1.5 is local because the compact model makes local inference practical.
+
+A future large or sensitive model can move to:
+
+- optimized local inference;
+- secure hosted GPU inference;
+- or a hybrid design with a local fallback and stronger remote model.
+
+The choice should be driven by model size, latency, privacy, updateability, infrastructure cost and model-protection requirements. The Backend already preserves a transport-neutral future seam without exposing a dormant recognition API in the current runtime.
+
+## Community and domain partnership
+
+As technical scope grows, priorities also include stronger collaboration with LSQ users, Deaf community organizations, educators, interpreters and qualified linguistic/domain partners; careful treatment of regional/signer variants; and explicit consent/provenance for new research data.
 
 ## Versioning principle
 
-Every major research/runtime generation should answer three questions clearly:
+Every major research generation should answer three questions:
 
-1. **What exactly changed?**
-2. **What evidence supports the new claims?**
+1. **What changed?**
+2. **What evidence supports the new capability?**
 3. **Can the previous baseline still be reproduced?**
 
-Runtime v1.5 exists to make that discipline possible from the beginning.
+Runtime v1.5 exists so the answer to question three is already yes.

@@ -1,54 +1,54 @@
 # Build manifest
 
-This document records the private application revisions represented by the Parlons LSQ public showcase.
+This file records the private-source and model identities represented by the public `v1.0.0-showcase` case study.
 
-## Canonical Runtime v1.5 snapshot
+## Release identity
 
-| Component | Repository | Revision / identity |
-|---|---|---|
-| Frontend product | private `ParlonsLSQ-Frontend` | `09d60a139ed81b84c6ca59ea1d70d6f1796816d7` |
-| Backend/reference runtime | private `ParlonsLSQ-Backend` | `71c6d7dae280f6f207ccdf67048ecaf7e2af2571` |
-| Recognition engine | frozen prototype | `prototype-lsq-29-v1` |
-| Feature schema | frozen compatibility schema | `legacy-mediapipe-228-v1` |
-| Reference H5 SHA-256 | private model artifact | `98590d3b47e299db7966bdc1d51946de3049d51934280e320e6dfbb18fda8110` |
-| Model input | frozen contract | `64 × 228` |
-| Model output | frozen contract | 29 classes |
-| Product targets | frozen validation target | Android · Web · Windows |
+| Field | Value |
+|---|---|
+| Showcase | `v1.0.0-showcase` |
+| Runtime | `v1.5` |
+| Public status | Ready for publication |
+| Recognition transport | Local/offline |
 
-## Product/runtime status
+## Private source revisions
 
-Runtime v1.5 implementation is **frozen for final validation**.
+| Repository | Represented revision |
+|---|---|
+| `ParlonsLSQ-Frontend` | `4ffa25aab11106a226c98787f567ca4eb3524fba` |
+| `ParlonsLSQ-Backend` | `c33d480db666723bece607990a5ef1b64aac0cf3` |
 
-Permitted changes before showcase release are limited to targeted fixes caused by a failed validation gate. Any such fix must update the represented source SHA above before new public evidence is captured.
+The source repositories remain private. These SHAs identify the frozen implementation lineage represented here; they do not make source code part of this public repository.
 
-New features, new datasets, model architecture experiments, or large-model work do not mutate this snapshot; they belong to future research revisions.
+## Frozen recognition identity
 
-## Evidence status
+| Property | Value |
+|---|---|
+| Engine | `prototype-lsq-29-v1` |
+| Task | Isolated-sign classification |
+| Classes | 29 |
+| Input | `64 × 228` |
+| Feature schema | `legacy-mediapipe-228-v1` |
+| Reference model | `final_server.h5` |
+| H5 SHA-256 | `98590d3b47e299db7966bdc1d51946de3049d51934280e320e6dfbb18fda8110` |
+| Score semantics | Raw classifier outputs, not calibrated confidence |
+| Trained unknown detector | None |
 
-The public evidence set is captured only after the final validation pass.
+## Public evidence assets
 
-Until those files are added and reviewed:
+| Asset | SHA-256 |
+|---|---|
+| `screenshots/01-home-web.webp` | `544c5ff857c573c199c97a0c69a4ae3c968f0b21aebb27c8216983bbf45b5614` |
+| `screenshots/02-recognition-ready-android.webp` | `36c2ca22c88d5c68990edce29840d60b20573387ef46b53d45fe086101f1b28d` |
+| `screenshots/03-recognition-result-android.webp` | `283a0eff17611b9ed89c57daca710b7a49d60332c31392f21fa6745964cb121d` |
+| `screenshots/04-recognition-result-web.webp` | `476b9aadb1a392ee133a68793a4067f2c345b1e596a63349597d3110b5023d0d` |
+| `screenshots/05-recognition-result-windows.webp` | `5e3b6b93d83b6af77bae152ed00d45f802645f9ddf8e83f733f4f3e65b72ef94` |
+| `screenshots/06-rtl.webp` | `eb4a9cff97b12c1e241ddc917f98f056ff848662b22109bba8ebf0454ab1c776` |
 
-- architecture/documentation may be considered release-candidate documentation;
-- final accuracy/latency fields remain intentionally absent;
-- no screenshot from an earlier debug build is accepted as release evidence;
-- no final showcase tag should be created.
+The machine-readable equivalent lives in `release/manifest.json`.
 
-The required visual set is defined in [EVIDENCE.md](EVIDENCE.md) and `release/manifest.json`.
+## Public/private boundary
 
-## Release rule
+This showcase contains documentation and curated visual evidence. It intentionally excludes private Flutter/Python source, model binaries, MediaPipe task assets, raw training/research data, credentials and participant media.
 
-A public showcase release represents **one exact pair** of private application revisions.
-
-If either private source revision changes after evidence capture:
-
-1. update this manifest and `release/manifest.json`;
-2. rerun the affected validation gate;
-3. recapture any evidence whose behavior or appearance changed;
-4. create a new showcase release record rather than silently rewriting an old tag.
-
-## Private-source boundary
-
-The SHAs above provide provenance without publishing private source code.
-
-Selected read-only access may be granted case-by-case as described in [ACCESS.md](ACCESS.md).
+Selected read-only implementation access may be considered under [ACCESS.md](ACCESS.md).
