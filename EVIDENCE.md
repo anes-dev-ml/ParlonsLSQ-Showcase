@@ -1,154 +1,60 @@
-# Evidence and validation
+# Evidence record
 
-Parlons LSQ separates **implementation status**, **engineering validation**, **controlled prototype evidence**, and **future generalization research**.
+This document explains what the public Runtime v1.5 showcase demonstrates and how to interpret it without turning prototype evidence into inflated claims.
 
-This distinction is central to the showcase: a polished interface and a working local model are valuable evidence, but they do not by themselves establish signer-generalized accuracy.
+## Engineering evidence
 
-## Current status
+The frozen recognition contract was carried into working application paths on all three developed targets:
 
-Runtime v1.5 implementation is frozen at the private source revisions recorded in [BUILD_MANIFEST.md](BUILD_MANIFEST.md).
+| Platform | Recognition path |
+|---|---|
+| Android | native MediaPipe observations → `64 × 228` → local LiteRT/TFLite |
+| Web | local browser clip → MediaPipe Tasks WASM → `64 × 228` → LiteRT.js WASM |
+| Windows | local clip → persistent local worker → MediaPipe/OpenCV → frozen H5 |
 
-Remaining work is validation and evidence capture only. A failed gate can trigger one targeted implementation fix; a passing gate does not trigger another redesign or model change.
+This is the central engineering proof of Runtime v1.5: the research artifact did not stop at a notebook or a single-machine script.
 
-## Final validation gates
+## Prototype observations
 
-### Frontend / product
+Development testing showed two complementary behaviors:
 
-The retained release-candidate checklist verifies:
+1. **Strong behavior in familiar conditions.** Under conditions similar to the original training/capture setup, the 29-class recognizer was reliable enough to support the product workflow.
+2. **Promising qualitative transfer with clear robustness limits.** Successful recognitions were observed on inputs from people/reference footage outside the original capture set, while changes in signing speed, lighting, framing, distance and camera/body position could reduce reliability quickly.
 
-- dependency resolution, localization generation, analysis, and tests;
-- Android physical-device installation and platform identity;
-- camera permission and lifecycle behavior;
-- recognition state transitions and result actions;
-- local saved signs/history persistence;
-- French, English, Arabic, and RTL behavior;
-- larger text, stronger contrast, and reduced motion;
-- Web recognition staying local to the browser;
-- Windows local-worker startup and teardown;
-- absence of missing-asset, image-codec, and overflow errors.
+Those sensitivities are consistent with the limited variation of the original small dataset and directly motivate the next data/model generation.
 
-### Backend / reference runtime
+No population-level accuracy statistic is inferred from these observations. They are presented as what they are: useful prototype evidence and a clear research lesson.
 
-The retained validation gate verifies:
+## Public visual evidence
 
-- lint/tests;
-- frozen model identity and feature schema;
-- fixed input/output signatures;
-- H5 ↔ TFLite parity;
-- matched cross-platform clip behavior;
-- controlled 29-class evaluation;
-- privacy/runtime boundary.
+The public gallery is intentionally small because the model/research story is the focus.
 
-## Controlled evaluation target
+| File | What it demonstrates | SHA-256 |
+|---|---|---|
+| `screenshots/01-home-web.webp` | Finished Web product surface | `544c5ff857c573c199c97a0c69a4ae3c968f0b21aebb27c8216983bbf45b5614` |
+| `screenshots/02-recognition-ready-android.webp` | Physical Android capture flow and camera-switch control | `36c2ca22c88d5c68990edce29840d60b20573387ef46b53d45fe086101f1b28d` |
+| `screenshots/03-recognition-result-android.webp` | Android local recognition result from an external-reference check | `283a0eff17611b9ed89c57daca710b7a49d60332c31392f21fa6745964cb121d` |
+| `screenshots/04-recognition-result-web.webp` | Web recognition result | `476b9aadb1a392ee133a68793a4067f2c345b1e596a63349597d3110b5023d0d` |
+| `screenshots/05-recognition-result-windows.webp` | Windows recognition result | `5e3b6b93d83b6af77bae152ed00d45f802645f9ddf8e83f733f4f3e65b72ef94` |
+| `screenshots/06-rtl.webp` | Arabic RTL layout and learning surface | `eb4a9cff97b12c1e241ddc917f98f056ff848662b22109bba8ebf0454ab1c776` |
 
-The predeclared Runtime v1.5 evaluation covers:
+## Screenshot provenance and privacy
 
-```text
-29 classes × 5 attempts = 145 controlled trials
-```
+- The Web and Windows camera previews were privacy-redacted after capture; prediction labels and result state were not edited.
+- The Android recognition-result example used external LSQ reference footage as a qualitative check. This repository does **not** redistribute that source footage or claim ownership of it.
+- No participant dataset, private model binary, raw camera clip, landmark tensor or feature sequence is included in the public showcase.
+- Images are optimized WebP presentation copies of the supplied screenshots.
 
-The final report should include at minimum:
+## Claim boundary
 
-- Top-1 and Top-3 results;
-- per-class results;
-- failure distribution;
-- signer/session conditions;
-- platform/runtime identity;
-- latency measurements where relevant;
-- exact model and feature-schema identifiers.
+The evidence supports a public description of Parlons LSQ as:
 
-This evaluation can support claims about the frozen prototype **under the documented conditions**. It does not establish population-level signer generalization.
+> **an experimental LSQ research-engineering project with a frozen 29-class isolated-sign baseline and local cross-platform inference on Android, Web and Windows.**
 
-## Visual evidence policy
+It does not support claims of continuous LSQ translation, general signer-independent accuracy, open-set recognition, calibrated confidence, clinical validation or a large sign-language model.
 
-Only clean evidence from the final validation snapshot belongs in this public showcase.
+## Why this evidence is enough for the first checkpoint
 
-The repository intentionally excludes:
+Runtime v1.5 was built to document and preserve the first full research-to-product chain. Its value is that the system is reproducible, deployable and honest about where the small original dataset breaks down.
 
-- screenshots containing Flutter error banners;
-- debug overflow markers;
-- stale launcher icons;
-- obsolete product layouts;
-- screenshots from model/runtime branches that are not the represented release candidate;
-- images whose source revision cannot be identified.
-
-## Final screenshot set
-
-The recommended minimum public gallery is small and deliberate rather than a dump of every screen.
-
-### 1. Product overview
-
-- `screenshots/01-home-desktop.png` — wide Home layout;
-- `screenshots/02-home-compact.png` — compact/responsive Home layout.
-
-### 2. Recognition
-
-- `screenshots/03-recognition-ready-android.png` — physical Android device, ready/positioning state;
-- `screenshots/04-recognition-result-android.png` — successful controlled result;
-- `screenshots/05-recognition-uncertain.png` — non-success state demonstrating honest feedback.
-
-### 3. Learning
-
-- `screenshots/06-sign-library.png` — catalogue/search/categories;
-- `screenshots/07-sign-detail.png` — detail/source/review presentation;
-- `screenshots/08-practice.png` — practice flow.
-
-### 4. User/privacy
-
-- `screenshots/09-privacy.png` — privacy/data screen;
-- `screenshots/10-settings-arabic-rtl.png` — Arabic/RTL or settings/accessibility evidence.
-
-### 5. Platform identity
-
-- `screenshots/11-android-launcher.png` — final installed Android icon;
-- optional small comparison showing Web/Windows identity if it adds meaningful evidence.
-
-## Video evidence
-
-A short product walkthrough is optional but valuable.
-
-If produced, the strongest 45–75 second sequence is:
-
-```text
-Home
-→ open Signs
-→ open one sign
-→ practice
-→ Recognition
-→ perform one controlled sign
-→ result
-→ Privacy / language switch
-```
-
-The video should show the real release-candidate application. Avoid simulated model output, hidden cuts that imply unsupported behavior, or claims not established by the evaluation.
-
-## Historical smoke evidence
-
-Small earlier checks may be useful as project history, but they should remain labeled **historical smoke evidence**. They are not substitutes for the frozen 145-trial protocol and should not headline the public accuracy story.
-
-## Evidence that should not be fabricated
-
-Do not add placeholder numbers for:
-
-- final Top-1/Top-3 accuracy;
-- unseen-signer accuracy;
-- cross-platform latency;
-- model size/performance comparison;
-- data volume;
-- signer count;
-- clinical/accessibility outcomes.
-
-When the final tests are complete, insert measured results together with the exact conditions.
-
-## Public evidence record
-
-After final capture, the showcase should record:
-
-- represented Frontend SHA;
-- represented Backend SHA;
-- evidence date;
-- screenshot inventory;
-- optional SHA-256 hashes for final screenshots/video;
-- controlled evaluation summary or link to its reviewed public summary.
-
-The private raw evaluation sessions, research media, and implementation source remain outside this repository.
+The next major evidence effort belongs to the larger research generation, where dataset diversity and model scale can justify substantially stronger evaluation.

@@ -1,39 +1,23 @@
 # Visual evidence gallery
 
-Only clean screenshots from the validated Runtime v1.5 revisions belong here.
+This directory contains the six curated images used by the `v1.0.0-showcase` case study.
 
-Do not commit debug screenshots, Flutter error banners, overflow markers, stale branding, or captures from a different private-source revision.
+The set is deliberately small. Parlons LSQ is presented primarily as an AI/research-engineering project; the application screenshots prove that the frozen prototype was carried into real cross-platform software.
 
-## Required evidence
+| File | Platform | Purpose |
+|---|---|---|
+| `01-home-web.webp` | Web | Product overview / hero |
+| `02-recognition-ready-android.webp` | Android | Physical-device capture flow and camera switching |
+| `03-recognition-result-android.webp` | Android | Successful qualitative external-reference recognition |
+| `04-recognition-result-web.webp` | Web | Browser-local recognition result |
+| `05-recognition-result-windows.webp` | Windows | Local-worker recognition result |
+| `06-rtl.webp` | Windows/desktop UI | Arabic RTL navigation and learning surface |
 
-| File | Purpose |
-|---|---|
-| `01-home-desktop.png` | Wide Home/product overview |
-| `02-home-compact.png` | Compact/responsive Home layout |
-| `03-recognition-ready-android.png` | Physical Android recognition ready/positioning state |
-| `04-recognition-result-android.png` | Successful controlled Android result |
-| `05-recognition-uncertain.png` | Honest non-success/uncertain state |
-| `06-sign-library.png` | Learning catalogue/search/categories |
-| `07-sign-detail.png` | Sign detail and learning/source presentation |
-| `08-practice.png` | Practice flow |
-| `09-privacy.png` | Privacy/data boundary in the product |
-| `10-settings-arabic-rtl.png` | Arabic RTL or settings/accessibility evidence |
-| `11-android-launcher.png` | Final Android launcher identity on a physical device |
+## Integrity and privacy notes
 
-## Capture rules
+- These files are optimized WebP presentation copies of the supplied screenshots.
+- Web and Windows camera previews were privacy-redacted after capture. Recognition labels/result state were not edited.
+- The Android result used external LSQ reference footage as a qualitative test. The source footage itself is not redistributed here and is not claimed as project-owned media.
+- No debug overlays, private notifications, participant datasets, model binary or raw research capture is included.
 
-- Use the exact Frontend revision recorded in `../BUILD_MANIFEST.md`.
-- Use controlled/demo content only.
-- Avoid personal notifications, account identifiers, unrelated desktop content, or real participant data.
-- Prefer native-resolution PNG.
-- Crop only when it improves focus without hiding relevant product state.
-- Do not edit model labels, confidence/score presentation, or UI state after capture.
-- Keep one canonical file per evidence role rather than accumulating near-duplicates.
-
-## README selection
-
-The main README should embed approximately 4–6 of the strongest final images rather than every screenshot. This directory remains the full visual evidence index.
-
-## Optional walkthrough
-
-If a short walkthrough video is published, record its filename/hash in `../release/manifest.json` and describe the exact represented Frontend revision.
+Per-file SHA-256 values are recorded in [../BUILD_MANIFEST.md](../BUILD_MANIFEST.md) and `../release/manifest.json`.

@@ -1,15 +1,16 @@
 {
   "showcase_release": "v1.0.0-showcase",
-  "status": "validation_pending",
+  "status": "ready",
   "project": "Parlons LSQ",
   "runtime": "v1.5",
+  "showcase_scope": "research-engineering case study",
   "frontend": {
     "repository": "private ParlonsLSQ-Frontend",
-    "revision": "09d60a139ed81b84c6ca59ea1d70d6f1796816d7"
+    "revision": "4ffa25aab11106a226c98787f567ca4eb3524fba"
   },
   "backend_reference": {
     "repository": "private ParlonsLSQ-Backend",
-    "revision": "71c6d7dae280f6f207ccdf67048ecaf7e2af2571"
+    "revision": "c33d480db666723bece607990a5ef1b64aac0cf3"
   },
   "recognition": {
     "engine": "prototype-lsq-29-v1",
@@ -23,31 +24,39 @@
   },
   "platforms": ["android", "web", "windows"],
   "recognition_transport": "local/offline",
-  "controlled_evaluation": {
-    "classes": 29,
-    "attempts_per_class": 5,
-    "planned_trials": 145,
-    "status": "pending_final_validation"
+  "prototype_evidence": {
+    "formal_population_accuracy_claim": false,
+    "summary": "Working local inference across Android, Web and Windows, with qualitative development observations beyond the original capture set.",
+    "known_sensitivity": [
+      "signing speed",
+      "lighting",
+      "framing and distance",
+      "camera and body position"
+    ],
+    "interpretation": "The sensitivities are consistent with limited variation in the original small dataset and motivate the next data/model generation."
   },
   "expected_screenshots": [
-    "screenshots/01-home-desktop.png",
-    "screenshots/02-home-compact.png",
-    "screenshots/03-recognition-ready-android.png",
-    "screenshots/04-recognition-result-android.png",
-    "screenshots/05-recognition-uncertain.png",
-    "screenshots/06-sign-library.png",
-    "screenshots/07-sign-detail.png",
-    "screenshots/08-practice.png",
-    "screenshots/09-privacy.png",
-    "screenshots/10-settings-arabic-rtl.png",
-    "screenshots/11-android-launcher.png"
+    "screenshots/01-home-web.webp",
+    "screenshots/02-recognition-ready-android.webp",
+    "screenshots/03-recognition-result-android.webp",
+    "screenshots/04-recognition-result-web.webp",
+    "screenshots/05-recognition-result-windows.webp",
+    "screenshots/06-rtl.webp"
   ],
+  "screenshot_sha256": {
+    "screenshots/01-home-web.webp": "544c5ff857c573c199c97a0c69a4ae3c968f0b21aebb27c8216983bbf45b5614",
+    "screenshots/02-recognition-ready-android.webp": "36c2ca22c88d5c68990edce29840d60b20573387ef46b53d45fe086101f1b28d",
+    "screenshots/03-recognition-result-android.webp": "283a0eff17611b9ed89c57daca710b7a49d60332c31392f21fa6745964cb121d",
+    "screenshots/04-recognition-result-web.webp": "476b9aadb1a392ee133a68793a4067f2c345b1e596a63349597d3110b5023d0d",
+    "screenshots/05-recognition-result-windows.webp": "5e3b6b93d83b6af77bae152ed00d45f802645f9ddf8e83f733f4f3e65b72ef94",
+    "screenshots/06-rtl.webp": "eb4a9cff97b12c1e241ddc917f98f056ff848662b22109bba8ebf0454ab1c776"
+  },
   "source_access": "private; case-by-case read-only review may be granted",
   "claim_boundary": {
-    "continuous_translation": false,
-    "fingerspelling": false,
-    "open_set_recognition": false,
-    "population_generalization": false,
+    "continuous_lsq_translation": false,
+    "calibrated_confidence": false,
+    "trained_open_set_unknown_detection": false,
+    "population_level_accuracy": false,
     "clinical_validation": false,
     "large_sign_language_model": false
   }

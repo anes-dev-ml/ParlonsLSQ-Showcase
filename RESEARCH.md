@@ -1,141 +1,101 @@
 # Research scope
 
-Parlons LSQ combines product engineering with a longer-term research goal: understand how to move from a small reproducible isolated-sign prototype toward stronger, larger-scale LSQ recognition and representation learning.
+Parlons LSQ began with a practical research question: **how far can a carefully designed sign representation and temporal model go when the available LSQ data is small?**
 
-Runtime v1.5 is deliberately conservative. It preserves one historical classifier and makes its behavior reproducible before the research program expands.
+Runtime v1.5 freezes the answer from the first generation so the next generation can improve on a real baseline rather than an undocumented prototype.
 
-## Frozen baseline
+## Frozen first-generation baseline
 
-| Property | Frozen value |
+| Property | Value |
 |---|---|
 | Engine | `prototype-lsq-29-v1` |
-| Task | isolated-sign classification |
+| Task | Isolated-sign classification |
 | Classes | 29 fixed historical labels |
 | Temporal input | 64 steps |
 | Per-step feature size | 228 |
 | Feature schema | `legacy-mediapipe-228-v1` |
-| Reference model | frozen H5 |
-| Product derivative | fixed-batch TFLite/LiteRT where required |
-| Score interpretation | raw classifier outputs, not calibrated probability |
-| Open-set detector | none trained |
+| Reference model | Frozen H5 |
+| Product derivative | Fixed-batch TFLite/LiteRT where required |
+| Scores | Raw classifier outputs, not calibrated probability |
+| Trained open-set detector | None |
 
-The exact model identity and feature layout are frozen in the private reference implementation. The purpose is reproducibility, not to imply that this is the final LSQ representation.
-
-## How the prototype was built
-
-The project lineage is important because it explains the present architecture:
+## How it was built
 
 ```text
-record isolated sign clips
-→ extract landmarks with MediaPipe
-→ convert each frame into a fixed numerical representation
-→ store processed examples as NumPy arrays
-→ assemble 64-step temporal training samples
+record isolated LSQ examples
+→ extract MediaPipe landmarks
+→ convert observations into a fixed 228-D representation
+→ store processed examples
+→ assemble 64-step temporal samples
 → train a 29-class classifier
-→ recover/freeze the historical H5
+→ freeze/recover the H5 artifact
 → reproduce the encoder exactly
-→ validate local product derivatives
+→ deploy compatible local runtimes on Android, Web and Windows
 ```
 
-This was a manually constructed pipeline rather than an end-to-end pretrained sign-language model.
+This was a manually constructed ML pipeline, not an end-to-end pretrained sign-language model.
 
-## Why freeze it now
+## What the baseline taught us
 
-Freezing the baseline prevents several common research mistakes:
+The prototype became strong enough in development conditions to drive a working recognition product and showed promising qualitative transfer to inputs outside the original capture set, including successful recognitions from people/reference footage not used to train the model.
 
-- silently changing preprocessing while comparing model results;
-- mixing product improvements with model improvements;
-- presenting a compatibility representation as a scientifically preferred representation;
-- treating a successful app demo as evidence of population-level generalization;
-- losing the exact model/data contract that produced earlier results.
+Its weakness was equally informative. Performance became easier to disturb when signing speed, lighting, framing, distance, camera/body position or capture conditions shifted away from the limited variation represented in the small original dataset.
 
-The 29-class runtime therefore becomes a reproducible reference point for future work.
+That points to a clear research lesson:
 
-## Evidence hierarchy
+> **The first model learned useful sign structure, but robustness is now a data-and-representation problem.**
 
-Parlons LSQ distinguishes several levels of evidence:
+Instead of spending the next cycle over-optimizing a 29-class dataset, the project is moving toward a much broader and more varied research foundation.
 
-### Engineering evidence
+## How to read the evidence
 
-Examples:
+The current evidence supports statements such as:
 
-- the model runs locally on a platform;
-- camera input reaches the frozen classifier;
-- H5 and TFLite derivatives agree within the declared tolerance;
-- Android/Web/Windows produce compatible outputs on controlled inputs;
-- the product handles permission, lifecycle, uncertain, and failure states.
+- the frozen model can power real local inference;
+- the same model contract can be carried across Android, Web and Windows;
+- recognition can work on qualitative examples outside the original capture set;
+- the original dataset's limited variation creates clear sensitivity to environmental and signing changes.
 
-### Controlled prototype evidence
+It is **not** used to claim population-level accuracy, signer-independent performance across LSQ users, continuous translation, open-vocabulary recognition or clinical validation.
 
-The final Runtime v1.5 protocol targets all 29 classes with five attempts per class, for 145 controlled trials. This can support statements about the frozen prototype under the documented test conditions.
+This distinction keeps the first baseline useful instead of forcing it to answer research questions it was never designed to answer.
 
-### Generalization evidence
+## Why freeze it
 
-This requires substantially stronger methodology: multiple unseen signers, independent sessions, broader data, signer-disjoint splits, enough samples per class, and analysis of class imbalance and failure modes.
+Freezing Runtime v1.5 preserves:
 
-Runtime v1.5 does **not** claim that level of evidence.
+- the exact feature layout;
+- the model identity;
+- the temporal input contract;
+- the platform deployment lineage;
+- the lessons learned from the original dataset.
 
-## Current claim boundary
+Future experiments can therefore replace the representation/model without rewriting history.
 
-The project may accurately be described as:
+## Next research generation
 
-> an experimental LSQ learning application with a local/offline 29-class isolated-sign recognition prototype and a reproducible cross-platform runtime.
+The next model is expected to focus on:
 
-It is not currently described as:
+- substantially larger and more varied LSQ data;
+- more signers and independent sessions;
+- signer/session-disjoint evaluation;
+- stronger visual-temporal representations;
+- better robustness to speed, lighting, framing, position and background;
+- pretrained video/sign-language encoders where scientifically and legally appropriate;
+- cross-lingual/cross-sign-language representation learning where it genuinely helps;
+- uncertainty/open-set methodology rather than forced closed-set answers;
+- a deployment strategy chosen from the model's actual size and security needs.
 
-- a general LSQ translator;
-- a continuous sign-language recognition system;
-- a fingerspelling recognizer;
-- an open-vocabulary sign recognizer;
-- a calibrated confidence system;
-- a clinically validated accessibility product;
-- a population-generalized LSQ model;
-- a large sign-language model.
-
-## Future research direction
-
-The long-term research direction is intentionally broader than the frozen prototype.
-
-Areas under investigation include:
-
-- larger LSQ datasets and better data provenance;
-- signer-disjoint and session-disjoint evaluation;
-- more robust visual-temporal representations;
-- hand, body, face, motion, and appearance information without overfitting to one capture setup;
-- pretrained sign-language or video encoders;
-- cross-lingual/cross-sign-language representation learning where scientifically appropriate;
-- contrastive and multimodal pretraining;
-- open-set behavior and uncertainty calibration;
-- continuous recognition once isolated-sign methodology is strong enough;
-- efficient deployment paths that preserve privacy and acceptable latency.
-
-These experiments belong in the private research workspace and should produce their own frozen manifests and evaluation protocols rather than mutating Runtime v1.5 in place.
+For a compact model, local inference remains attractive. A future larger or more valuable model may use secure server-side inference or a hybrid local/cloud design.
 
 ## LSQ-specific responsibility
 
-A technically strong model can still be a poor sign-language project if the data, labels, variants, cultural context, or evaluation assumptions are weak.
+Scaling the model is only useful if the data and labels remain meaningful. As the project grows, technical work should be matched by stronger involvement from LSQ users, educators, interpreters, Deaf community organizations and qualified linguistic/domain partners.
 
-Future work therefore needs increasing collaboration with LSQ users, educators, interpreters, Deaf community organizations, and qualified linguistic/domain partners. Product labels and learning content should not be treated as authoritative linguistic reference merely because a classifier can predict them.
+Normal product recognition is not research data collection. Any future contribution flow should have explicit consent, purpose, provenance, retention and deletion rules.
 
-## Research data boundary
+## The role of Runtime v1.5
 
-Normal product recognition is not research data collection.
+Runtime v1.5 is no longer where the project needs to spend its research energy. Its job is to remain a **reproducible first checkpoint** showing that the complete chain—from hand-built data to a working AI product—was achieved.
 
-Any future research contribution flow should define at minimum:
-
-- explicit informed opt-in;
-- what media/features are collected;
-- purpose and retention;
-- withdrawal/deletion process where applicable;
-- provenance and consent state;
-- permitted research uses;
-- whether data may be shared with research partners;
-- whether derived features/models can outlive raw media.
-
-The current product intentionally keeps this separate from ordinary recognition.
-
-## What success looks like next
-
-The next meaningful research milestone is not simply “more classes.” It is a model/evaluation package where a stronger representation and larger dataset demonstrate convincing performance on **unseen signers under a predeclared protocol** while preserving a clear privacy and provenance story.
-
-Runtime v1.5 gives that future work a baseline to beat without rewriting history.
+The next checkpoint should be harder to earn.

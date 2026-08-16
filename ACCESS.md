@@ -2,31 +2,31 @@
 
 Parlons LSQ follows the same public-showcase/private-implementation model used for GymFlow.
 
-This repository is public-facing. The active implementation repositories are private and are not distributed through this showcase.
+This repository is the public-facing research and engineering case study. The active implementation and research repositories remain private and are not distributed through this showcase.
 
 ## What is public
 
-This showcase may include:
+This showcase includes material suitable for normal professional and research review:
 
 - reviewed architecture and engineering documentation;
-- research scope and claim boundaries;
-- exact represented source revisions;
-- final product screenshots and optional walkthrough media;
-- controlled evaluation summaries suitable for public review;
+- the frozen model/runtime identity and project lineage;
+- research scope, observations and claim boundaries;
+- exact represented private-source revisions;
+- curated cross-platform product evidence;
 - privacy and data-handling boundaries;
-- roadmap and project history.
+- release provenance, roadmap and project history.
 
 ## What remains private
 
 Private repositories contain material such as:
 
 - Flutter application source;
-- Python backend/reference runtime source;
+- Python Backend/reference runtime source;
 - platform ML adapters and runtime tooling;
 - model-export/parity tooling;
-- research experiments and working notes;
-- local model/task binaries where licensing/provenance requires restricted handling;
-- non-public evaluation artifacts or datasets.
+- active research experiments and working material;
+- model/task binaries where licensing, security or provenance requires restricted handling;
+- non-public research artifacts and datasets.
 
 ## Requesting access
 
@@ -51,6 +51,6 @@ Any broader use requires separate written permission.
 
 ## Why the source is private
 
-The goal is not to hide the engineering story. This showcase intentionally exposes the architecture, product behavior, evidence, limitations, and provenance needed for normal professional review.
+The goal is not to hide the engineering story. This showcase exposes the architecture, product behavior, evidence, research lessons and provenance needed to understand the work.
 
-Keeping implementation private preserves control over unfinished research material, datasets/model artifacts, third-party licensing constraints, and future commercialization or collaboration options while still allowing deeper review when there is a legitimate reason.
+Keeping implementation private preserves control over research assets, datasets/model artifacts, third-party licensing constraints, model security, future commercialization and collaboration options while still allowing deeper review when there is a legitimate reason.

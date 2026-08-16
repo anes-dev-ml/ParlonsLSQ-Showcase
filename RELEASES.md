@@ -1,76 +1,69 @@
 # Showcase release policy
 
-The public showcase is a reviewed evidence record for private-source application revisions.
+The public Showcase is a curated research-engineering record for private-source revisions.
 
 ## Release model
 
-A showcase release binds together:
+A Showcase release binds together:
 
 - one Frontend revision;
 - one Backend/reference revision;
-- one frozen runtime/model identity;
-- one reviewed public evidence set;
-- the documentation describing those exact boundaries.
+- one frozen model/runtime identity;
+- one curated public evidence set;
+- the documentation and claim boundary describing that snapshot.
 
-The canonical source revisions are recorded in [BUILD_MANIFEST.md](BUILD_MANIFEST.md) and `release/manifest.json`.
+Canonical provenance is recorded in [BUILD_MANIFEST.md](BUILD_MANIFEST.md) and `release/manifest.json`.
 
-## Local showcase validation
+## Release validation
 
-Record mode validates the documentation/provenance structure while final screenshots and controlled-evaluation results are still pending:
+The repository includes a standard-library validator:
 
 ```powershell
 .\scripts\validate_showcase.ps1
 ```
 
-Release mode is intentionally stricter. It requires `release/manifest.json` to be marked ready, the controlled evaluation to be complete, and every expected screenshot to exist:
+For the publication snapshot, use strict release mode:
 
 ```powershell
 .\scripts\validate_showcase.ps1 -Release
 ```
 
-The validator uses only the Python standard library and checks required documents, private-source revision provenance, the frozen model contract, the 145-trial plan, the local/offline recognition boundary, expected release evidence, and obvious sensitive-file/secret mistakes.
+Release mode checks that:
 
-## Runtime v1.5 release sequence
+- the manifest is marked `ready`;
+- Frontend and Backend revisions are valid 40-character SHAs and appear in the public provenance documents;
+- the frozen recognition identity has not drifted;
+- Runtime v1.5 remains documented as local/offline recognition;
+- every declared screenshot exists and matches its recorded SHA-256;
+- obvious private-key/secret artifacts are not present.
 
-1. Freeze implementation.
-2. Run product/reference validation.
-3. Apply only targeted fixes caused by failed gates.
-4. Update represented private-source SHAs if a fix changed either repository.
-5. Capture clean visual evidence from the final validated revisions.
-6. Insert measured controlled-evaluation results without expanding the claim boundary.
-7. Set the machine-readable manifest to `status: ready` and the evaluation status to `complete`.
-8. Run showcase validation in release mode.
-9. Merge the reviewed showcase branch to `main`.
-10. Tag the immutable public evidence record as `v1.0.0-showcase`.
-11. Make the repository public only after the reviewed release record is ready.
+The release gate deliberately validates **provenance and evidence integrity**, not an invented numeric accuracy requirement for the historical prototype.
+
+## `v1.0.0-showcase`
+
+This release represents:
+
+- Frontend `4ffa25aab11106a226c98787f567ca4eb3524fba`;
+- Backend/reference `c33d480db666723bece607990a5ef1b64aac0cf3`;
+- engine `prototype-lsq-29-v1`;
+- six curated Android/Web/Windows/RTL visual evidence assets;
+- the final Runtime v1.5 architecture, research narrative, privacy boundary and source-access policy.
 
 ## Correction policy
 
-A public release tag is immutable.
+A public release tag should be treated as immutable. If a material documentation/evidence correction is needed later:
 
-If documentation or evidence later needs correction:
+- leave the old tag intact;
+- make the correction on `main`;
+- publish a patch Showcase release;
+- record what changed and why.
 
-- do not move an existing release tag;
-- create a new showcase patch release;
-- record what changed and why;
-- preserve the previous tag for provenance.
+## What requires a new Showcase release
 
-## What requires a new showcase release
+A new release is appropriate when the represented Frontend/Backend revision, frozen model identity, feature schema, public evidence set or claim boundary changes materially.
 
-A new release record is required when any of these change materially:
-
-- represented Frontend revision;
-- represented Backend/reference revision;
-- frozen model identity;
-- feature schema;
-- user-visible evidence;
-- controlled evaluation summary;
-- claim boundary.
-
-Minor typo corrections that do not alter evidence can still use a patch showcase release once a public tag exists.
+Future research generations should get their own release records rather than silently mutating the v1.5 story.
 
 ## Private implementation releases
 
-Showcase tags are not application distribution releases and do not make the private source repositories public.
-
-Read-only implementation access remains discretionary under [ACCESS.md](ACCESS.md).
+Showcase tags are evidence/case-study releases, not application-distribution releases. They do not make private implementation repositories or model/data assets public.
