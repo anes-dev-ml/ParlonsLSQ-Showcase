@@ -2,9 +2,9 @@
 
 Parlons LSQ began with a practical research question: **how far can a carefully designed sign representation and temporal model go when the available LSQ data is small?**
 
-Runtime v1.5 freezes the answer from the first generation so the next generation can improve on a real baseline rather than an undocumented prototype.
+Runtime v1.5 freezes the first answer to that question so the next generation can improve on a real baseline rather than an undocumented prototype.
 
-## Frozen first-generation baseline
+## First-generation baseline
 
 | Property | Value |
 |---|---|
@@ -16,8 +16,8 @@ Runtime v1.5 freezes the answer from the first generation so the next generation
 | Feature schema | `legacy-mediapipe-228-v1` |
 | Reference model | Frozen H5 |
 | Product derivative | Fixed-batch TFLite/LiteRT where required |
-| Scores | Raw classifier outputs, not calibrated probability |
-| Trained open-set detector | None |
+| Scores | Raw classifier outputs |
+| Open-set detector | Not part of this generation |
 
 ## How it was built
 
@@ -33,44 +33,25 @@ record isolated LSQ examples
 → deploy compatible local runtimes on Android, Web and Windows
 ```
 
-This was a manually constructed ML pipeline, not an end-to-end pretrained sign-language model.
+This was a manually constructed ML pipeline. Each stage—from representation design to deployment—became part of the project rather than being hidden behind a pretrained end-to-end model.
 
 ## What the baseline taught us
 
-The prototype became strong enough in development conditions to drive a working recognition product and showed promising qualitative transfer to inputs outside the original capture set, including successful recognitions from people/reference footage not used to train the model.
+The model became strong enough in development conditions to drive a working recognition product and showed promising qualitative transfer to inputs outside the original capture set, including successful recognitions from people and reference footage not used in training.
 
-Its weakness was equally informative. Performance became easier to disturb when signing speed, lighting, framing, distance, camera/body position or capture conditions shifted away from the limited variation represented in the small original dataset.
+Its sensitivity also pointed directly to the next research problem. Speed, lighting, framing, distance, camera/body position, and other capture changes could move inputs outside the narrow variation represented in the original dataset.
 
-That points to a clear research lesson:
+The first generation therefore produced a clear conclusion:
 
-> **The first model learned useful sign structure, but robustness is now a data-and-representation problem.**
+> **The model learned useful sign structure; the next gains depend on broader data and a stronger representation.**
 
-Instead of spending the next cycle over-optimizing a 29-class dataset, the project is moving toward a much broader and more varied research foundation.
+That is why Runtime v1.5 is frozen rather than endlessly tuned.
 
-## How to read the evidence
+## Current research scope
 
-The current evidence supports statements such as:
+Runtime v1.5 focuses on isolated-sign classification and cross-platform deployment of one reproducible baseline. It gives the project a stable reference for model identity, preprocessing, temporal input, and deployment behavior.
 
-- the frozen model can power real local inference;
-- the same model contract can be carried across Android, Web and Windows;
-- recognition can work on qualitative examples outside the original capture set;
-- the original dataset's limited variation creates clear sensitivity to environmental and signing changes.
-
-It is **not** used to claim population-level accuracy, signer-independent performance across LSQ users, continuous translation, open-vocabulary recognition or clinical validation.
-
-This distinction keeps the first baseline useful instead of forcing it to answer research questions it was never designed to answer.
-
-## Why freeze it
-
-Freezing Runtime v1.5 preserves:
-
-- the exact feature layout;
-- the model identity;
-- the temporal input contract;
-- the platform deployment lineage;
-- the lessons learned from the original dataset.
-
-Future experiments can therefore replace the representation/model without rewriting history.
+The next generations can then address broader questions with the right methodology: more signers, independent sessions, larger vocabularies, stronger robustness testing, open-set behavior, and eventually continuous signing.
 
 ## Next research generation
 
@@ -80,22 +61,22 @@ The next model is expected to focus on:
 - more signers and independent sessions;
 - signer/session-disjoint evaluation;
 - stronger visual-temporal representations;
-- better robustness to speed, lighting, framing, position and background;
+- better robustness to speed, lighting, framing, position, and background;
 - pretrained video/sign-language encoders where scientifically and legally appropriate;
 - cross-lingual/cross-sign-language representation learning where it genuinely helps;
-- uncertainty/open-set methodology rather than forced closed-set answers;
+- uncertainty/open-set methodology;
 - a deployment strategy chosen from the model's actual size and security needs.
 
-For a compact model, local inference remains attractive. A future larger or more valuable model may use secure server-side inference or a hybrid local/cloud design.
+For a compact model, local inference remains attractive. A larger or more valuable future model may use secure server-side inference or a hybrid local/cloud design.
 
-## LSQ-specific responsibility
+## LSQ and domain collaboration
 
-Scaling the model is only useful if the data and labels remain meaningful. As the project grows, technical work should be matched by stronger involvement from LSQ users, educators, interpreters, Deaf community organizations and qualified linguistic/domain partners.
+As the project grows, technical scaling should be matched by stronger involvement from LSQ users, educators, interpreters, Deaf community organizations, and qualified linguistic/domain partners. Better data is not only more data; it also means better labels, provenance, variants, consent, and context.
 
-Normal product recognition is not research data collection. Any future contribution flow should have explicit consent, purpose, provenance, retention and deletion rules.
+Normal product recognition remains separate from research data collection. Any future contribution flow should define explicit consent, purpose, provenance, retention, and deletion rules.
 
-## The role of Runtime v1.5
+## Role of Runtime v1.5
 
-Runtime v1.5 is no longer where the project needs to spend its research energy. Its job is to remain a **reproducible first checkpoint** showing that the complete chain—from hand-built data to a working AI product—was achieved.
+Runtime v1.5 is the project's **reproducible first checkpoint**: a complete path from hand-built data and model design to working local AI software.
 
-The next checkpoint should be harder to earn.
+The next checkpoint should be larger, harder, and supported by stronger data.

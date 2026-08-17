@@ -1,12 +1,12 @@
 # Architecture
 
-Parlons LSQ Runtime v1.5 is a **local-first multi-platform runtime** built around a frozen historical 29-class isolated-sign classifier.
+Parlons LSQ Runtime v1.5 is a **local-first multi-platform runtime** built around a frozen 29-class isolated-sign classifier.
 
-The architecture separates three things deliberately:
+The architecture keeps three layers distinct:
 
-1. **Research/model contract** — the frozen model, temporal input and compatibility feature schema.
-2. **Product experience** — camera lifecycle, recognition states, learning content, history, localization and accessibility.
-3. **Future research generation** — new data, representations and larger models that should not silently rewrite the v1.5 baseline.
+1. **Research/model contract** — the frozen model, temporal input, and compatibility feature schema.
+2. **Product experience** — camera lifecycle, recognition states, learning content, history, localization, and accessibility.
+3. **Future research generation** — new data, representations, and larger models that can evolve without rewriting the v1.5 baseline.
 
 ## System context
 
@@ -24,7 +24,7 @@ flowchart LR
     Flutter --> Store
 ```
 
-Normal recognition does not depend on an HTTP inference endpoint in Runtime v1.5.
+Runtime v1.5 keeps recognition local and uses the Backend separately for content and reference tooling.
 
 ## Frozen recognition contract
 
@@ -38,7 +38,7 @@ Normal recognition does not depend on an HTTP inference endpoint in Runtime v1.5
 | Reference model | Frozen historical H5 |
 | Product derivative | Fixed-batch TFLite/LiteRT where required |
 | Output semantics | Raw classifier scores |
-| Trained unknown detector | None |
+| Open-set detector | Outside the v1.5 scope |
 
 Shared conceptual pipeline:
 
@@ -51,9 +51,9 @@ flowchart LR
     M --> R[Typed recognition result]
 ```
 
-## Recognition state model
+## Recognition lifecycle
 
-Recognition is treated as a lifecycle rather than a single camera button:
+Recognition is represented as a sequence of explicit states:
 
 ```text
 permission required
@@ -65,7 +65,7 @@ permission required
 → recognized / uncertain / unknown / insufficient input
 ```
 
-Lifecycle interruption and runtime/hardware failures remain explicit recoverable states.
+That shared lifecycle lets each platform use its own ML runtime while the product behaves consistently.
 
 ## Android
 
@@ -81,7 +81,7 @@ CameraImage
 → shared product result
 ```
 
-The app starts from its preferred camera and exposes **camera switching when multiple cameras are available**. Switching is allowed only from the safe ready state, not in the middle of capture or processing.
+The app starts from its preferred camera and exposes **camera switching when multiple cameras are available**. Switching is restricted to the ready state so capture and inference are not interrupted mid-attempt.
 
 ## Web
 
@@ -98,11 +98,11 @@ browser camera
 → shared product result
 ```
 
-Recognition stays in the browser. Runtime v1.5 does not require a TFJS recognition bridge or remote recognition server.
+The complete recognition path remains inside the browser runtime.
 
 ## Windows
 
-The Windows target uses a local persistent worker adapter:
+The Windows target uses a local persistent worker:
 
 ```text
 Flutter camera clip
@@ -114,11 +114,11 @@ Flutter camera clip
 → shared product result
 ```
 
-The worker remains local and does not open an HTTP recognition port.
+This keeps the reference H5 path available locally while preserving the same product-level result contract used by the other platforms.
 
-## Backend boundary
+## Backend
 
-The active FastAPI surface is intentionally small:
+The active FastAPI surface handles service health/readiness and versioned learning content:
 
 ```text
 GET /api/v1/health
@@ -127,45 +127,37 @@ GET /api/v1/signs
 GET /api/v1/signs/{sign_id}
 ```
 
-The Backend also retains model/reference utilities, parity/evaluation tooling and the Windows worker. In addition, it now preserves a **transport-neutral remote-recognition contract** for a future large or sensitive model. That seam is dormant in Runtime v1.5: it is not mounted as an HTTP recognition route and does not change the current local product behavior.
+The Backend also contains model/reference utilities, parity/evaluation tooling, the Windows worker, and a **transport-neutral remote-recognition contract** reserved for a future model that may be too large or sensitive to ship entirely on-device.
 
-This gives the project a clean future path:
+That gives the project a clean deployment path across generations:
 
 ```text
-current compact model → local inference
-future larger model   → local / secure hosted / hybrid, chosen from actual constraints
+compact model → local inference
+larger model  → local / secure hosted / hybrid, chosen from actual constraints
 ```
 
-## Learning and recognition are separate
+## Learning and recognition
 
-Learning content is not forced to match the 29 recognition classes. A sign can be useful educational content even when the frozen classifier does not support it.
+Learning content is broader than the classifier vocabulary. A sign can be useful educational content even when it is outside the 29 recognition classes.
 
-The app can use versioned learning content and a bundled read-only fallback, so a missing content service does not make the learning surface unusable.
+The app can use versioned learning content with a bundled read-only fallback, keeping the learning surface usable independently from the ML runtime.
 
 ## Local state and privacy
 
-The application may keep:
-
-- interface preferences;
-- saved signs;
-- optional recognition-result history.
-
-Ordinary local history excludes camera frames, video clips, MediaPipe landmarks and 228-D feature tensors. Recognition media/features are temporary runtime inputs.
+The application may keep interface preferences, saved signs, and optional recognition-result history. Camera frames, video clips, MediaPipe landmarks, and 228-D feature tensors remain temporary recognition inputs rather than ordinary history records.
 
 ## Localization and accessibility
 
-The product supports French, English and Arabic, including RTL presentation for Arabic, plus responsive layout behavior, stronger contrast preferences and reduced-motion preferences.
+The product supports French, English, and Arabic with RTL presentation, responsive layouts, stronger contrast preferences, and reduced-motion preferences.
 
 ## Architectural principles
 
-- **Freeze before scaling.** The historical model and feature contract remain identifiable and reproducible.
-- **One result contract, different platform runtimes.** Presentation code does not need to understand MediaPipe/TensorFlow/LiteRT details.
-- **Local by default for v1.5.** Privacy and latency stay simple while the model is compact enough to ship.
-- **Do not confuse compatibility code with future research architecture.** `legacy-mediapipe-228-v1` exists to reproduce the first model, not to dictate the next one.
-- **Preserve an upgrade seam.** A future model can move server-side or hybrid without resurrecting an old development endpoint as production architecture.
+- **Freeze before scaling.** The first model and feature contract remain identifiable and reproducible.
+- **One result contract, different runtimes.** Platform-specific ML details stay below the product layer.
+- **Local-first for v1.5.** The compact model makes on-device/browser inference practical.
+- **Compatibility is not destiny.** `legacy-mediapipe-228-v1` preserves the first model; it does not constrain the next one.
+- **Keep an upgrade seam.** Future large-model deployment can evolve without rewriting the current application architecture.
 
 ## Source boundary
 
-Detailed implementation lives in private repositories. This document describes reviewed architecture without distributing private source, model binaries, credentials or research datasets.
-
-Exact represented revisions are recorded in [BUILD_MANIFEST.md](BUILD_MANIFEST.md).
+Detailed implementation lives in private repositories. Exact represented revisions are recorded in [BUILD_MANIFEST.md](BUILD_MANIFEST.md), with selected review access described in [ACCESS.md](ACCESS.md).

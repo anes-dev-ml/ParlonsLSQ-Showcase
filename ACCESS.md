@@ -1,56 +1,30 @@
-# Private source access
+# Source access
 
-Parlons LSQ follows the same public-showcase/private-implementation model used for GymFlow.
+Parlons LSQ uses a public-showcase/private-implementation model. This repository presents the project, architecture, research direction, release provenance, and selected product evidence; the active implementation and research repositories remain private.
 
-This repository is the public-facing research and engineering case study. The active implementation and research repositories remain private and are not distributed through this showcase.
+## Public showcase
 
-## What is public
+The public repository includes:
 
-This showcase includes material suitable for normal professional and research review:
-
-- reviewed architecture and engineering documentation;
-- the frozen model/runtime identity and project lineage;
-- research scope, observations and claim boundaries;
+- the model/runtime story and project lineage;
+- architecture for Android, Web, Windows, and the Backend boundary;
+- prototype observations and research lessons;
+- final cross-platform screenshots;
 - exact represented private-source revisions;
-- curated cross-platform product evidence;
-- privacy and data-handling boundaries;
-- release provenance, roadmap and project history.
+- privacy, roadmap, release, and security documentation.
 
-## What remains private
+For most portfolio, recruitment, and research review, this Showcase is the intended entry point.
 
-Private repositories contain material such as:
+## Deeper technical review
 
-- Flutter application source;
-- Python Backend/reference runtime source;
-- platform ML adapters and runtime tooling;
-- model-export/parity tooling;
-- active research experiments and working material;
-- model/task binaries where licensing, security or provenance requires restricted handling;
-- non-public research artifacts and datasets.
+For a serious recruitment process, research collaboration, technical review, or partnership discussion, selected **read-only access** to private implementation material may be considered case-by-case.
 
-## Requesting access
+A useful request includes who you are, what you would like to review, and the purpose of the review. Contact the project owner through **[@anes-dev-ml](https://github.com/anes-dev-ml)**.
 
-For a serious technical review, recruitment process, research collaboration, or partnership discussion, selected **read-only private repository access may be granted case-by-case**.
+Access can be limited to the repositories or revisions relevant to the discussion.
 
-A request should explain:
+## Review terms
 
-- who you are or the organization you represent;
-- why you want implementation access;
-- which part of the project you need to review;
-- whether the review is for recruitment, research, collaboration, partnership, or another specific purpose.
+Private access is for review unless broader permission is agreed separately. Source code, model artifacts, research material, datasets, and branding remain under their respective ownership and licensing terms; reuse or redistribution requires permission.
 
-Contact the project owner through the GitHub account **[@anes-dev-ml](https://github.com/anes-dev-ml)**.
-
-Access is discretionary and may be limited to specific repositories, branches, revisions, files, or a time-bounded review window.
-
-## Access does not imply a license
-
-Private review access does not grant permission to copy, redistribute, publish, sublicense, commercialize, train on, or reuse source code, model artifacts, research material, datasets, or branding.
-
-Any broader use requires separate written permission.
-
-## Why the source is private
-
-The goal is not to hide the engineering story. This showcase exposes the architecture, product behavior, evidence, research lessons and provenance needed to understand the work.
-
-Keeping implementation private preserves control over research assets, datasets/model artifacts, third-party licensing constraints, model security, future commercialization and collaboration options while still allowing deeper review when there is a legitimate reason.
+The private/public split keeps the Showcase easy to explore while preserving flexibility around active research, model assets, datasets, licensing, security, and future collaboration.
