@@ -121,7 +121,7 @@ The full provenance record is in [BUILD_MANIFEST.md](BUILD_MANIFEST.md).
 
 ## Where the project goes next
 
-Runtime v1.5 proves the full path from hand-built data to a reproducible AI system. The next research generation is about **scale, variation, and robustness**: broader LSQ data, more signers and sessions, stronger visual-temporal representations, and a model capable of supporting a much larger vocabulary under harder real-world conditions.
+Runtime v1.5 establishes the full path from hand-built data to a reproducible AI system. The next research generation is about **scale, variation, and robustness**: broader LSQ data, more signers and sessions, stronger visual-temporal representations, and a model capable of supporting a much larger vocabulary under harder real-world conditions.
 
 That work lives in the private research workspace so each generation can advance without rewriting the historical baseline. See [ROADMAP.md](ROADMAP.md).
 
@@ -148,4 +148,4 @@ More detail: [ACCESS.md](ACCESS.md).
 
 ---
 
-**A small model was enough to prove the chain. The next model is where the research gets ambitious.**
+**A small model established the chain. The next model is where the research gets ambitious.**
