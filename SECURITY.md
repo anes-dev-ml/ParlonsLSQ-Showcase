@@ -1,35 +1,26 @@
-# Security and responsible disclosure
+# Security
 
-This public repository is a documentation/evidence showcase. It does not contain the private Parlons LSQ application source, credentials, production configuration, private research sessions, or datasets.
+This repository is the public Parlons LSQ Showcase. The application source, model/runtime implementation, credentials, research sessions, and datasets are maintained separately.
 
-## Reporting a security issue
+## Reporting an issue
 
-If you believe you found a security or privacy issue affecting Parlons LSQ, do **not** publish sensitive details in a public issue.
+If you find a security or privacy issue related to Parlons LSQ, contact **[@anes-dev-ml](https://github.com/anes-dev-ml)** with the affected platform/component, version or revision if known, reproduction steps, and the observed impact.
 
-Contact the project owner through **[@anes-dev-ml](https://github.com/anes-dev-ml)** and provide enough information to reproduce and assess the issue safely.
+Please avoid posting sensitive reproduction details publicly when they could expose user data, credentials, private research assets, or implementation access.
 
-Useful details include:
+## Areas of interest
 
-- affected platform or component;
-- version/revision if known;
-- reproduction steps;
-- expected versus observed behavior;
-- potential privacy/security impact;
-- whether any real user/research data may have been exposed.
+Reports are especially useful for issues involving:
 
-## Areas of particular concern
-
-Responsible reports are especially useful for issues involving:
-
-- camera or recognition media unexpectedly leaving the local runtime;
-- local history storing frames, clips, landmarks, or feature tensors contrary to the documented boundary;
+- recognition media unexpectedly leaving its documented runtime boundary;
+- local history retaining camera media or feature data;
 - unsafe file/path handling in local runtime adapters;
-- credential/token leakage;
-- unintended public access to private repositories, model assets, or research data;
-- privacy/consent bypass in any future research-participation workflow.
+- credential or token exposure;
+- unintended access to private repositories, model assets, or research data;
+- consent/provenance issues in future research-participation workflows.
 
-## Scope boundary
+## Dependency boundary
 
-The showcase documentation describes reviewed architecture and expected behavior but is not a security certification. Third-party Flutter packages, MediaPipe, TensorFlow/LiteRT, browser runtimes, OS camera systems, and other dependencies retain their own security/support boundaries.
+Parlons LSQ builds on Flutter, MediaPipe, TensorFlow/LiteRT, browser runtimes, operating-system camera APIs, and other third-party components. Those dependencies retain their own security and support processes.
 
-No bounty program or response-time SLA is implied by this document.
+This Showcase documents the project's architecture and practices; it is not a security certification or bounty program.

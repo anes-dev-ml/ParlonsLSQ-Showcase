@@ -1,76 +1,51 @@
-# Privacy and data boundary
+# Privacy
 
-Parlons LSQ is designed around a simple principle: **using recognition is not the same thing as contributing research data**.
+Recognition and research data collection are separate by design in Parlons LSQ.
 
-Runtime v1.5 keeps normal recognition local to the user's device/browser path and treats research participation as a separate future decision.
+Runtime v1.5 keeps ordinary recognition local to the user's device or browser path, while any future research-data contribution would use a separate opt-in workflow.
 
-## Normal recognition
+## Recognition runtime
 
 ### Android
 
-Recognition runs on-device through the local MediaPipe + LiteRT/TFLite path.
+Recognition runs on-device through MediaPipe and LiteRT/TFLite.
 
 ### Web
 
-Recognition runs inside the browser through MediaPipe WASM + LiteRT.js WASM.
+Recognition runs inside the browser through MediaPipe WASM and LiteRT.js WASM.
 
-### Windows development runtime
+### Windows
 
-A short local clip is passed to a local stdio Python worker on the same machine. The worker does not expose an HTTP recognition service.
+A short local clip is passed to a local stdio Python worker on the same machine.
 
 ## Product history
 
-When optional local recognition history is enabled, the intended record contains result metadata such as:
+Optional local recognition history stores result-oriented metadata such as recognized label/status, time, and runtime/version information where applicable.
 
-- result/status;
-- recognized label when available;
-- time;
-- recognition/runtime version metadata where applicable.
+Camera frames, video clips, raw landmarks, and 228-D feature tensors are temporary recognition inputs rather than ordinary history records.
 
-Ordinary product history does **not** store:
+Saved signs and interface preferences are local product state and do not require an account.
 
-- camera frames;
-- video clips;
-- raw landmarks;
-- 228-D feature tensors.
+## Network use
 
-Saved signs and interface preferences are also local product state and do not require an account.
-
-## Network boundary
-
-The product can use network access for non-recognition content when configured, such as the versioned learning catalogue.
-
-Normal recognition clips and feature tensors are not sent to the Parlons LSQ HTTP API.
-
-The HTTP API is intentionally limited to ordinary service health/readiness and learning-content endpoints.
+The product may use network access for versioned learning content. Runtime v1.5 recognition itself remains local across Android, Web, and Windows.
 
 ## Research participation
 
-Normal recognition sessions are not automatically converted into research samples.
+Future research-data contribution should be explicit and separate from normal recognition. A contribution flow would define what is collected, why it is collected, consent state, provenance, retention/deletion rules, sharing boundaries, and how derived research artifacts are handled.
 
-Any future contribution flow should be explicit and separate from ordinary app use. It should clearly state:
+This separation lets the product evolve toward larger research datasets without turning everyday camera use into silent data collection.
 
-- what is being collected;
-- why it is being collected;
-- whether raw video, landmarks, derived features, labels, or metadata are retained;
-- retention/deletion rules;
-- research partners or sharing boundaries;
-- consent state and provenance;
-- withdrawal process where applicable;
-- whether trained models or derived artifacts can persist after raw-data deletion.
+## Logging
 
-This showcase does not claim that a production research-consent system has already been deployed.
+Recognition logging is designed around runtime events and diagnostics rather than camera media or feature payloads. Credentials and authentication material also remain outside normal logs.
 
-## Logging boundary
+## Why local-first fits Runtime v1.5
 
-Product/runtime logging should not contain camera frames, clips, landmark arrays, 228-D tensors, credentials, or authentication tokens.
+Sign-language video can contain face, body, movement, environment, and identity cues. With a model small enough to run locally, keeping the recognition path on-device/in-browser provides a simple and useful privacy boundary.
 
-## Why local-first matters here
+Future model generations can revisit deployment architecture alongside their model size, performance, and security requirements.
 
-Sign-language video can contain far more personal information than a text query: face, body, environment, movement, identity cues, and potentially sensitive context.
+## Public Showcase
 
-Keeping the recognition path local reduces unnecessary transfer and makes the product's privacy story easier to understand. It does not remove the need for strong consent and governance if future research data collection is introduced.
-
-## Public showcase boundary
-
-This public repository contains no private user recordings, research-session media, production credentials, or raw datasets. Public screenshots should use only controlled/test content suitable for portfolio publication.
+The Showcase contains curated screenshots and documentation only. It does not include raw research sessions, private user recordings, production credentials, model binaries, or datasets.
