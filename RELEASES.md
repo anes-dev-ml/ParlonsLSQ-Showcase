@@ -1,47 +1,32 @@
-# Showcase releases
+# Releases
 
-A Showcase release captures one stable Parlons LSQ research-and-engineering snapshot: the represented private-source revisions, frozen model identity, curated screenshots, and documentation for that generation.
+The public Showcase records historical project snapshots. It does not package the private application source, datasets, or model binaries.
 
-Canonical provenance is recorded in [BUILD_MANIFEST.md](BUILD_MANIFEST.md) and `release/manifest.json`.
+## Current snapshot
 
-## Release validation
+`v1.0.0-showcase` documents Parlons LSQ Runtime v1.5:
 
-The repository includes a standard-library validator:
+- A 29-class isolated-sign model using 64 × 228 input
+- Local Android, Web, and Windows inference paths
+- Six curated screenshots
+- Frozen model identification and historical source revisions
 
-```powershell
-.\scripts\validate_showcase.ps1
+Full identifiers and checksums are maintained in [Build manifest](BUILD_MANIFEST.md) and [release/manifest.json](release/manifest.json).
+
+## Validate the Showcase
+
+The repository includes a Python standard-library validator:
+
+```sh
+python scripts/validate_showcase.py
 ```
 
-For a publication snapshot, strict release mode checks provenance and asset integrity:
+For publication, use its strict release mode as described by `python scripts/validate_showcase.py --help`, or run the PowerShell wrapper:
 
 ```powershell
 .\scripts\validate_showcase.ps1 -Release
 ```
 
-It verifies:
+The validator checks the release manifest and public artifact integrity. It is **not** a machine-learning accuracy evaluation.
 
-- manifest status and source revision format;
-- frozen model identity and input contract;
-- local/offline Runtime v1.5 recognition transport;
-- presence and SHA-256 integrity of each declared screenshot;
-- obvious secret/private-key artifacts.
-
-The validator protects the identity of the Showcase snapshot; model-quality research evolves through its own evaluation methods.
-
-## `v1.0.0-showcase`
-
-The first Showcase release represents:
-
-- Frontend `4ffa25aab11106a226c98787f567ca4eb3524fba`;
-- Backend/reference `c33d480db666723bece607990a5ef1b64aac0cf3`;
-- engine `prototype-lsq-29-v1`;
-- six curated Android/Web/Windows/RTL screenshots;
-- the Runtime v1.5 architecture, research observations, privacy design, and source-access policy.
-
-## Future releases
-
-A new Showcase version is appropriate when the represented Frontend/Backend revision, model generation, feature schema, public visual set, or research scope changes materially.
-
-Existing release tags stay immutable so earlier checkpoints remain easy to trace. Documentation-only corrections can be published as patch Showcase releases.
-
-Showcase releases describe the project; they do not distribute the private implementation, model binaries, or research datasets.
+Release tags should remain tied to their original snapshot. Publish changes to model identity, source lineage, or evidence as a new version rather than silently rewriting an earlier release.
