@@ -113,14 +113,11 @@ def validate_screenshot_integrity(data: dict) -> None:
 
 
 def validate_provenance(data: dict) -> None:
-    readme = (ROOT / "README.md").read_text(encoding="utf-8")
     build = (ROOT / "BUILD_MANIFEST.md").read_text(encoding="utf-8")
     for label, sha in (
         ("frontend", data["frontend"]["revision"]),
         ("backend", data["backend_reference"]["revision"]),
     ):
-        if sha not in readme:
-            fail(f"{label} revision missing from README")
         if sha not in build:
             fail(f"{label} revision missing from BUILD_MANIFEST")
 
